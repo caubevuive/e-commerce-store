@@ -1,13 +1,56 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
-      th:replace="~{base::layout(~{::section})}">
+	th:replace="~{base::layout(~{::section})}">
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>Login</title>
 </head>
 <body>
-	<section><h1>Login page 2</h1> 
+	<section>
+		<div class="container my-5">
+			<div class="row align-items-center justify-content-center">
+
+				<!-- Cột bên trái: Hình ảnh -->
+				<div class="col-md-6 text-center">
+					<img alt="Login Illustration" th:src="@{/img/ecom.png}"
+						class="img-fluid" style="max-height: 380px; object-fit: contain;">
+				</div>
+
+				<!-- Cột bên phải: Form đăng nhập -->
+				<div class="col-md-5">
+					<div class="card shadow-sm border">
+						<div class="card-header bg-light">
+							<p class="fs-4 text-center mb-0">Login</p>
+						</div>
+						<div class="card-body">
+							<form>
+								<div class="mb-3">
+									<label class="form-label">Email</label> <input
+										class="form-control" name="email" type="email">
+								</div>
+
+								<div class="mb-3">
+									<label class="form-label">Password</label> <input
+										class="form-control" name="password" type="password">
+								</div>
+
+								<button type="submit" class="btn bg-primary text-white w-100">Login</button>
+							</form>
+						</div>
+
+						<!-- Start Card Footer -->
+						<div class="card-footer text-center">
+							<a href="#" class="text-decoration-none">Forgot Password</a><br>
+							Don't have an account ? <a href="#" class="text-decoration-none">Create
+								one</a>
+						</div>
+						<!-- End Card Footer -->
+
+					</div>
+				</div>
+
+			</div>
+		</div>
 	</section>
-	<h1>Demo page</h1>
 </body>
 </html>
