@@ -21,4 +21,14 @@ public class HomeController {
 	public String register() {
 		return "register";
 	}
+
+	@GetMapping("/products")
+	public String products() {
+		return "product";
+	}
+
+	@GetMapping("/product")
+	public String product() {
+		return "view_product";
+	}
 }

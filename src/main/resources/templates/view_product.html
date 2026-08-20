@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	th:replace="~{base::layout(~{::section})}">
+<head>
+<meta charset="ISO-8859-1">
+<title>View Product</title>
+</head>
+<body>
+	<section>
+		<div class="container p-0" style="margin-top: 10px;">
+			<div class="card card-sh p-3">
+				<div class="card-body p-1">
+					<div class="row">
+						
+						<!-- Cột 1: Ảnh sản phẩm bên trái -->
+						<div class="col-md-6 text-end">
+							<img alt="Laptop" src="/img/product_img/laptop.jpg" width="400px"
+								height="450px" style="object-fit: contain;">
+						</div>
+
+						<!-- Cột 2: Thông tin chi tiết bên phải -->
+						<div class="col-md-6">
+							<p class="fs-3">Laptop</p>
+							
+							<p class="fw-bold mb-1">Description :</p>
+							<p class="text-secondary">Hp Laptop, 256Gb SSD</p>
+
+							<p class="fw-bold mb-1">Product Details:</p>
+							<div class="mb-1">
+								<span class="fw-bold">Status : </span>
+								<span class="badge bg-success">Available</span>
+								<span class="badge bg-warning text-white">out of stock</span>
+							</div>
+							<p class="mb-1"><span class="fw-bold">Category : </span>Laptop</p>
+							<p class="mb-3"><span class="fw-bold">Policy : </span>7 Days Replacement & Return</p>
+
+							<!-- Hiển thị giá tiền $ -->
+							<p class="fs-5 mb-4">
+								<span class="fw-bold">Price : </span>
+								<span class="fs-4 fw-bold ms-2">$700</span>
+								<span class="text-decoration-line-through text-secondary ms-1">$1400</span>
+								<span class="fs-6 text-success fw-bold ms-1">50% off</span>
+							</p>
+
+							<!-- Các icon chính sách -->
+							<div class="row text-center mb-4">
+								<div class="col-md-4 text-success">
+									<i class="fa-solid fa-money-bill-wave fa-2x"></i>
+									<p class="mb-0 mt-1" style="font-size: 13px;">Cash On Delivery</p>
+								</div>
+								<div class="col-md-4 text-danger">
+									<i class="fa-solid fa-arrows-rotate fa-2x"></i>
+									<p class="mb-0 mt-1" style="font-size: 13px;">Return Available</p>
+								</div>
+								<div class="col-md-4 text-primary">
+									<i class="fa-solid fa-truck-fast fa-2x"></i>
+									<p class="mb-0 mt-1" style="font-size: 13px;">Free Shipping</p>
+								</div>
+							</div>
+
+							<!-- Nút Add To Cart -->
+							<a href="#" class="btn btn-danger col-md-12 py-2 fs-5">Add To Cart</a>
+						</div>
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+</body>
+</html>
