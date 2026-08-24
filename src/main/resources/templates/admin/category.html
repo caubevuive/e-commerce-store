@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	th:replace="~{base::layout(~{::section})}">
+<head>
+<meta charset="UTF-8">
+<title>Category</title>
+</head>
+<body>
+	<section>
+		<div class="container-fluid p-5 mt-3">
+			<div class="row">
+
+			
+				<div class="col-md-3">
+					<div class="card card-sh">
+						<div class="card-header text-center fs-4">
+							<p class="fs-4 mb-0">Add Category</p>
+						</div>
+						<div class="card-body">
+							<form action="/admin/saveCategory" method="post"
+								enctype="multipart/form-data">
+
+							
+								<div class="mb-3">
+									<label class="form-label">Enter Category</label> <input
+										type="text" name="name" class="form-control">
+								</div>
+
+								
+								<div class="mb-3">
+									<label class="form-label">Upload Image</label> <input
+										type="file" name="file" class="form-control">
+								</div>
+
+						
+								<button class="btn btn-primary col-md-12 mt-2">Save</button>
+
+							</form>
+						</div>
+					</div>
+				</div>
+
+				
+				<div class="col-md-9">
+					<div class="card card-sh">
+						<div class="card-header text-center fs-4">
+							<p class="fs-4 mb-0">Category Details</p>
+						</div>
+						<div class="card-body">
+							<table class="table table-hover">
+								<thead>
+									<tr>
+										<th scope="col">Sl No</th>
+										<th scope="col">Category</th>
+										<th scope="col">Image</th>
+										<th scope="col">Action</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<th scope="row">1</th>
+										<td>Mark</td>
+										<td>Otto</td>
+										<td>@mdo</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+
+			</div>
+		</div>
+	</section>
+</body>
+</html>
