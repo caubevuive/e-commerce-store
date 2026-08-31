@@ -7,61 +7,85 @@
 </head>
 <body>
 	<section>
-		<div class="container-fluid p-5 mt-3">
+		<div class="container-fluid p-5 mt-5">
 			<div class="row">
 
-			
+				<!-- Form Add Category -->
 				<div class="col-md-3">
 					<div class="card card-sh">
-						<div class="card-header text-center fs-4">
-							<p class="fs-4 mb-0">Add Category</p>
-						</div>
+						<div class="card-header text-center fs-4">Add Category</div>
 						<div class="card-body">
+
+							<!-- Hiển thị thông báo thành công -->
+							<th:block th:if="${session.succMsg}">
+								<p class="text-success fw-bold text-center">[[${session.succMsg}]]</p>
+							</th:block>
+
+							<!-- Hiển thị thông báo lỗi -->
+							<th:block th:if="${session.errorMsg}">
+								<p class="text-danger fw-bold text-center">[[${session.errorMsg}]]</p>
+							</th:block>
+
 							<form action="/admin/saveCategory" method="post"
 								enctype="multipart/form-data">
-
-							
 								<div class="mb-3">
 									<label class="form-label">Enter Category</label> <input
-										type="text" name="name" class="form-control">
+										type="text" name="name" class="form-control" required>
 								</div>
 
-								
+								<div class="mb-3">
+									<label class="form-label">Status</label>
+									<div class="form-check">
+										<input class="form-check-input" type="radio" checked
+											value="true" name="isActive" id="flexRadioDefault1">
+										<label class="form-check-label" for="flexRadioDefault1">Active</label>
+									</div>
+
+									<div class="form-check">
+										<input class="form-check-input" type="radio" value="false"
+											name="isActive" id="flexRadioDefault2"> <label
+											class="form-check-label" for="flexRadioDefault2">Inactive</label>
+									</div>
+								</div>
+
 								<div class="mb-3">
 									<label class="form-label">Upload Image</label> <input
 										type="file" name="file" class="form-control">
 								</div>
 
-						
 								<button class="btn btn-primary col-md-12 mt-2">Save</button>
-
 							</form>
 						</div>
 					</div>
 				</div>
 
-				
+				<!-- Bảng hiển thị Category Details -->
 				<div class="col-md-9">
 					<div class="card card-sh">
-						<div class="card-header text-center fs-4">
-							<p class="fs-4 mb-0">Category Details</p>
-						</div>
+						<div class="card-header text-center fs-4">Category Details</div>
 						<div class="card-body">
 							<table class="table table-hover">
 								<thead>
 									<tr>
 										<th scope="col">Sl No</th>
 										<th scope="col">Category</th>
+										<th scope="col">Status</th>
 										<th scope="col">Image</th>
 										<th scope="col">Action</th>
 									</tr>
 								</thead>
 								<tbody>
-									<tr>
-										<th scope="row">1</th>
-										<td>Mark</td>
-										<td>Otto</td>
-										<td>@mdo</td>
+									<tr th:each="cat, ch : ${categorys}">
+										<th scope="row">[[${ch.count}]]</th>
+										<td>[[${cat.name}]]</td>
+										<td>[[${cat.isActive}]]</td>
+										<td><img
+											th:src="@{'/img/category_img/' + ${cat.imageName}}"
+											width="50px" height="50px"></td>
+										<td><a th:href="@{'/admin/editCategory/' + ${cat.id}}"
+											class="btn btn-sm btn-primary">Edit</a> <a
+											th:href="@{'/admin/deleteCategory/' + ${cat.id}}"
+											class="btn btn-sm btn-danger">Delete</a></td>
 									</tr>
 								</tbody>
 							</table>
