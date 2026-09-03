@@ -16,14 +16,16 @@
 						<div class="card-header text-center fs-4">Add Category</div>
 						<div class="card-body">
 
-							<!-- Hiển thị thông báo thành công -->
+							
 							<th:block th:if="${session.succMsg}">
 								<p class="text-success fw-bold text-center">[[${session.succMsg}]]</p>
+								<th:block th:text="${@commonServiceImpl.removeSessionMessage()}"></th:block>
 							</th:block>
 
-							<!-- Hiển thị thông báo lỗi -->
+						
 							<th:block th:if="${session.errorMsg}">
 								<p class="text-danger fw-bold text-center">[[${session.errorMsg}]]</p>
+								<th:block th:text="${@commonServiceImpl.removeSessionMessage()}"></th:block>
 							</th:block>
 
 							<form action="/admin/saveCategory" method="post"
@@ -53,13 +55,15 @@
 										type="file" name="file" class="form-control">
 								</div>
 
-								<button class="btn btn-primary col-md-12 mt-2">Save</button>
+								<button class="btn btn-primary col-md-12 mt-2">
+									<i class="fa-solid fa-plus me-1"></i> Save
+								</button>
 							</form>
 						</div>
 					</div>
 				</div>
 
-				<!-- Bảng hiển thị Category Details -->
+				
 				<div class="col-md-9">
 					<div class="card card-sh">
 						<div class="card-header text-center fs-4">Category Details</div>
@@ -82,10 +86,19 @@
 										<td><img
 											th:src="@{'/img/category_img/' + ${cat.imageName}}"
 											width="50px" height="50px"></td>
-										<td><a th:href="@{'/admin/editCategory/' + ${cat.id}}"
-											class="btn btn-sm btn-primary">Edit</a> <a
-											th:href="@{'/admin/deleteCategory/' + ${cat.id}}"
-											class="btn btn-sm btn-danger">Delete</a></td>
+										<td>
+										
+											<a th:href="@{'/admin/editCategory/' + ${cat.id}}"
+												class="btn btn-sm btn-primary">
+												<i class="fa-solid fa-pen-to-square me-1"></i> Edit
+											</a> 
+											
+											
+											<a th:href="@{'/admin/deleteCategory/' + ${cat.id}}"
+												class="btn btn-sm btn-danger">
+												<i class="fa-solid fa-trash me-1"></i> Delete
+											</a>
+										</td>
 									</tr>
 								</tbody>
 							</table>

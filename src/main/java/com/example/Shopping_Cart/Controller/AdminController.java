@@ -14,6 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -43,7 +44,7 @@ public class AdminController {
 
 	@GetMapping("/category")
 	public String category(Model model) {
-		// Truyền danh sách Category ra file HTML
+
 		model.addAttribute("categorys", categoryService.getAllCategory());
 		return "admin/category";
 	}
@@ -65,13 +66,12 @@ public class AdminController {
 			if (ObjectUtils.isEmpty(saveCategory)) {
 				session.setAttribute("errorMsg", "Not saved ! internal server error");
 			} else {
-				// Thực hiện upload và lưu file ảnh vào thư mục dự án
+
 				if (!file.isEmpty()) {
 					File saveFile = new ClassPathResource("static/img").getFile();
 					Path path = Paths.get(saveFile.getAbsolutePath() + File.separator + "category_img" + File.separator
 							+ file.getOriginalFilename());
 
-					// Tự động tạo thư mục category_img nếu chưa có
 					File categoryDir = new File(saveFile.getAbsolutePath() + File.separator + "category_img");
 					if (!categoryDir.exists()) {
 						categoryDir.mkdirs();
@@ -85,5 +85,55 @@ public class AdminController {
 		}
 
 		return "redirect:/admin/category";
+	}
+
+	@GetMapping("/deleteCategory/{id}")
+	public String deleteCategory(@PathVariable int id, HttpSession session) {
+		Boolean deleteCategory = categoryService.deleteCategory(id);
+
+		if (deleteCategory) {
+			session.setAttribute("succMsg", "category delete success");
+		} else {
+			session.setAttribute("errorMsg", "something wrong on server");
+		}
+
+		return "redirect:/admin/category";
+	}
+
+	@GetMapping("/editCategory/{id}")
+	public String loadEditCategory(@PathVariable int id, Model model) {
+		model.addAttribute("category", categoryService.getCategoryById(id));
+		return "admin/edit_category";
+	}
+
+	@PostMapping("/updateCategory")
+	public String updateCategory(@ModelAttribute Category category, @RequestParam("file") MultipartFile file,
+			HttpSession session) throws IOException {
+
+		Category oldCategory = categoryService.getCategoryById(category.getId());
+		String imageName = file.isEmpty() ? oldCategory.getImageName() : file.getOriginalFilename();
+
+		if (!ObjectUtils.isEmpty(oldCategory)) {
+			oldCategory.setName(category.getName());
+			oldCategory.setIsActive(category.getIsActive());
+			oldCategory.setImageName(imageName);
+		}
+
+		Category updateCategory = categoryService.saveCategory(oldCategory);
+
+		if (!ObjectUtils.isEmpty(updateCategory)) {
+			if (!file.isEmpty()) {
+				File saveFile = new ClassPathResource("static/img").getFile();
+				Path path = Paths.get(saveFile.getAbsolutePath() + File.separator + "category_img" + File.separator
+						+ file.getOriginalFilename());
+
+				Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+			}
+			session.setAttribute("succMsg", "Category update success");
+		} else {
+			session.setAttribute("errorMsg", "Something wrong on server");
+		}
+
+		return "redirect:/admin/editCategory/" + category.getId();
 	}
 }
