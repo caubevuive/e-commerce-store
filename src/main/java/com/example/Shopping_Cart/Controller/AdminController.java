@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -21,7 +22,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.Shopping_Cart.model.Category;
+import com.example.Shopping_Cart.model.Product;
 import com.example.Shopping_Cart.service.CategoryService;
+import com.example.Shopping_Cart.service.ProductService;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -32,19 +35,56 @@ public class AdminController {
 	@Autowired
 	private CategoryService categoryService;
 
+	@Autowired
+	private ProductService productService;
+
 	@GetMapping("/")
 	public String index() {
 		return "admin/index";
 	}
 
 	@GetMapping("/loadAddProduct")
-	public String loadAddProduct() {
+	public String loadAddProduct(Model model) {
+		List<Category> categories = categoryService.getAllCategory();
+		model.addAttribute("categories", categories);
 		return "admin/add_product";
+	}
+
+	@PostMapping("/saveProduct")
+	public String saveProduct(@ModelAttribute Product product, @RequestParam("file") MultipartFile image,
+			HttpSession session) throws IOException {
+
+		String imageName = image.isEmpty() ? "default.jpg" : image.getOriginalFilename();
+		product.setImage(imageName);
+
+		Product saveProduct = productService.saveProduct(product);
+
+		if (!ObjectUtils.isEmpty(saveProduct)) {
+
+			if (!image.isEmpty()) {
+				File saveFile = new ClassPathResource("static/img").getFile();
+
+				Path path = Paths.get(saveFile.getAbsolutePath() + File.separator + "product_img" + File.separator
+						+ image.getOriginalFilename());
+
+				File productDir = new File(saveFile.getAbsolutePath() + File.separator + "product_img");
+				if (!productDir.exists()) {
+					productDir.mkdirs();
+				}
+
+				Files.copy(image.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+			}
+
+			session.setAttribute("succMsg", "Product Saved Successfully");
+		} else {
+			session.setAttribute("errorMsg", "Something wrong on server");
+		}
+
+		return "redirect:/admin/loadAddProduct";
 	}
 
 	@GetMapping("/category")
 	public String category(Model model) {
-
 		model.addAttribute("categorys", categoryService.getAllCategory());
 		return "admin/category";
 	}
