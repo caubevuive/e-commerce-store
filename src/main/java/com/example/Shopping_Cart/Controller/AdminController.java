@@ -176,4 +176,58 @@ public class AdminController {
 
 		return "redirect:/admin/editCategory/" + category.getId();
 	}
+
+	@GetMapping("/products")
+	public String loadViewProduct(Model model) {
+		model.addAttribute("products", productService.getAllProducts());
+		return "admin/products";
+	}
+
+	@GetMapping("/deleteProduct/{id}")
+	public String deleteProduct(@PathVariable int id, HttpSession session) {
+		Boolean deleteProduct = productService.deleteProduct(id);
+		if (deleteProduct) {
+			session.setAttribute("succMsg", "Product delete success");
+		} else {
+			session.setAttribute("errorMsg", "Something wrong on server");
+		}
+		return "redirect:/admin/products";
+	}
+
+	@GetMapping("/editProduct/{id}")
+	public String editProduct(@PathVariable int id, Model model) {
+		model.addAttribute("product", productService.getProductById(id));
+		model.addAttribute("categories", categoryService.getAllCategory());
+		return "admin/edit_product";
+	}
+
+	@PostMapping("/updateProduct")
+	public String updateProduct(@ModelAttribute Product product, @RequestParam("file") MultipartFile image,
+			HttpSession session) throws IOException {
+
+		Product oldProduct = productService.getProductById(product.getId());
+		String imageName = image.isEmpty() ? oldProduct.getImage() : image.getOriginalFilename();
+
+		oldProduct.setTitle(product.getTitle());
+		oldProduct.setCategory(product.getCategory());
+		oldProduct.setPrice(product.getPrice());
+		oldProduct.setStock(product.getStock());
+		oldProduct.setImage(imageName);
+
+		Product updateProduct = productService.saveProduct(oldProduct);
+
+		if (!ObjectUtils.isEmpty(updateProduct)) {
+			if (!image.isEmpty()) {
+				File saveFile = new ClassPathResource("static/img").getFile();
+				Path path = Paths.get(saveFile.getAbsolutePath() + File.separator + "product_img" + File.separator
+						+ image.getOriginalFilename());
+				Files.copy(image.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+			}
+			session.setAttribute("succMsg", "Product updated successfully");
+		} else {
+			session.setAttribute("errorMsg", "Something wrong on server");
+		}
+
+		return "redirect:/admin/editProduct/" + product.getId();
+	}
 }
