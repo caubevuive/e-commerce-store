@@ -12,27 +12,28 @@
 				<div class="card-header text-center fs-4">
 					<p class="fs-4 fw-bold">View Products</p>
 
-					
 					<th:block th:if="${session.succMsg}">
 						<p class="text-success fw-bold">[[${session.succMsg}]]</p>
 						<th:block th:text="${@commonServiceImpl.removeSessionMessage()}"></th:block>
 					</th:block>
 
-					
 					<th:block th:if="${session.errorMsg}">
 						<p class="text-danger fw-bold">[[${session.errorMsg}]]</p>
 						<th:block th:text="${@commonServiceImpl.removeSessionMessage()}"></th:block>
 					</th:block>
 				</div>
 				<div class="card-body">
-					<table class="table table-bordered">
-						<thead class="table-light">
+					<table class="table">
+						<thead>
 							<tr>
 								<th scope="col">Sl No</th>
 								<th scope="col">Image</th>
 								<th scope="col">Title</th>
 								<th scope="col">Category</th>
 								<th scope="col">Price</th>
+								<th scope="col">Discount</th>
+								<th scope="col">Discount Price</th>
+								<th scope="col">Status</th>
 								<th scope="col">Stock</th>
 								<th scope="col">Action</th>
 							</tr>
@@ -45,12 +46,15 @@
 								<td>[[${p.title}]]</td>
 								<td>[[${p.category}]]</td>
 								<td>[[${p.price}]]</td>
+								<td>[[${p.discount}]]</td>
+								<td>[[${p.discountPrice}]]</td>
+								<td>[[${p.isActive}]]</td>
 								<td>[[${p.stock}]]</td>
 								<td><a th:href="@{'/admin/editProduct/' + ${p.id}}"
-									class="btn btn-sm btn-primary"> <i
+									class="btn btn-primary btn-sm"> <i
 										class="fa-solid fa-pen-to-square"></i> Edit
 								</a> <a th:href="@{'/admin/deleteProduct/' + ${p.id}}"
-									class="btn btn-sm btn-danger"> <i class="fa-solid fa-trash"></i>
+									class="btn btn-danger btn-sm"> <i class="fa-solid fa-trash"></i>
 										Delete
 								</a></td>
 							</tr>

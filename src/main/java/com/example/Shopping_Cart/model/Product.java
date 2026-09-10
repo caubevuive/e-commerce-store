@@ -26,11 +26,22 @@ public class Product {
 
 	private String image;
 
+	private Integer discount;
+
+	@Column(name = "discount_price")
+	private Double discountPrice;
+
+	@Column(name = "is_active")
+	private Boolean isActive;
+
+	// Constructor rỗng
 	public Product() {
 	}
 
+	// Constructor đầy đủ
 	public Product(Integer id, String title, String description, String category, Double price, Integer stock,
-			String image) {
+			String image, Integer discount, Double discountPrice, Boolean isActive) {
+
 		this.id = id;
 		this.title = title;
 		this.description = description;
@@ -38,6 +49,9 @@ public class Product {
 		this.price = price;
 		this.stock = stock;
 		this.image = image;
+		this.discount = discount;
+		this.discountPrice = discountPrice;
+		this.isActive = isActive;
 	}
 
 	public Integer getId() {
@@ -94,5 +108,29 @@ public class Product {
 
 	public void setImage(String image) {
 		this.image = image;
+	}
+
+	public Integer getDiscount() {
+		return discount;
+	}
+
+	public void setDiscount(Integer discount) {
+		this.discount = discount;
+	}
+
+	public Double getDiscountPrice() {
+		return discountPrice;
+	}
+
+	public void setDiscountPrice(Double discountPrice) {
+		this.discountPrice = discountPrice;
+	}
+
+	public Boolean getIsActive() {
+		return isActive;
+	}
+
+	public void setIsActive(Boolean isActive) {
+		this.isActive = isActive;
 	}
 }

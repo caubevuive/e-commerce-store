@@ -1,8 +1,14 @@
 package com.example.Shopping_Cart.service.impl;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,14 +29,13 @@ public class ProductServiceImpl implements ProductService {
 	}
 
 	@Override
-	public List<Product> getAllProducts() {
+	public List<Product> getAllproducts() {
 		return productRepository.findAll();
 	}
 
 	@Override
-	public List<Product> getAllproducts() {
-		// TODO Auto-generated method stub
-		return null;
+	public List<Product> getAllProducts() {
+		return productRepository.findAll();
 	}
 
 	@Override
@@ -49,8 +54,53 @@ public class ProductServiceImpl implements ProductService {
 	}
 
 	@Override
-	public Product updateProduct(Product product, MultipartFile file) {
-		// TODO Auto-generated method stub
+	public Product updateProduct(Product product, MultipartFile image) {
+		Product dbProduct = getProductById(product.getId());
+
+		String imageName = image.isEmpty() ? dbProduct.getImage() : image.getOriginalFilename();
+
+		dbProduct.setTitle(product.getTitle());
+		dbProduct.setDescription(product.getDescription());
+		dbProduct.setCategory(product.getCategory());
+		dbProduct.setPrice(product.getPrice());
+		dbProduct.setStock(product.getStock());
+		dbProduct.setImage(imageName);
+		dbProduct.setIsActive(product.getIsActive());
+		dbProduct.setDiscount(product.getDiscount());
+
+		Double discount = product.getPrice() * (product.getDiscount() / 100.0);
+		Double discountPrice = product.getPrice() - discount;
+		dbProduct.setDiscountPrice(discountPrice);
+
+		Product updateProduct = productRepository.save(dbProduct);
+
+		if (!ObjectUtils.isEmpty(updateProduct)) {
+			if (!image.isEmpty()) {
+				try {
+					File saveFile = new ClassPathResource("static/img/product_img").getFile();
+					Path path = Paths.get(saveFile.getAbsolutePath() + File.separator + image.getOriginalFilename());
+					Files.copy(image.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			return product;
+		}
 		return null;
+	}
+
+	@Override
+	public List<Product> getAllActiveProducts(String category) {
+		List<Product> products = null;
+
+		if (ObjectUtils.isEmpty(category)) {
+			// Lấy tất cả sản phẩm đang Active (Bỏ các sp Inactive khỏi trang All)
+			products = productRepository.findByIsActiveTrue();
+		} else {
+			// Lấy sản phẩm theo Category VÀ bắt buộc isActive = true
+			products = productRepository.findByCategoryAndIsActiveTrueIgnoreCase(category.trim());
+		}
+
+		return products;
 	}
 }

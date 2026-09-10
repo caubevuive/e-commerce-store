@@ -11,46 +11,67 @@
 			<div class="card card-sh p-3">
 				<div class="card-body p-1">
 					<div class="row">
-						
-						<!-- Cột 1: Ảnh sản phẩm bên trái -->
+
+						<!-- Cột 1: Ảnh sản phẩm động -->
 						<div class="col-md-6 text-end">
-							<img alt="Laptop" src="/img/product_img/laptop.jpg" width="400px"
+							<img th:alt="${product.title}"
+								th:src="@{'/img/product_img/' + ${product.image}}" width="400px"
 								height="450px" style="object-fit: contain;">
 						</div>
 
-						<!-- Cột 2: Thông tin chi tiết bên phải -->
+						<!-- Cột 2: Thông tin chi tiết động từ Database -->
 						<div class="col-md-6">
-							<p class="fs-3">Laptop</p>
-							
-							<p class="fw-bold mb-1">Description :</p>
-							<p class="text-secondary">Hp Laptop, 256Gb SSD</p>
+							<!-- Tên sản phẩm -->
+							<p class="fs-3">[[${product.title}]]</p>
 
+							<!-- Mô tả -->
+							<p class="fw-bold mb-1">Description :</p>
+							<p class="text-secondary">[[${product.description}]]</p>
+
+							<!-- Chi tiết sản phẩm & Trạng thái Status -->
 							<p class="fw-bold mb-1">Product Details:</p>
 							<div class="mb-1">
 								<span class="fw-bold">Status : </span>
-								<span class="badge bg-success">Available</span>
-								<span class="badge bg-warning text-white">out of stock</span>
-							</div>
-							<p class="mb-1"><span class="fw-bold">Category : </span>Laptop</p>
-							<p class="mb-3"><span class="fw-bold">Policy : </span>7 Days Replacement & Return</p>
 
-							<!-- Hiển thị giá tiền $ -->
+								<!-- Báo Available khi Active VÀ Stock > 0 -->
+								<th:block th:if="${product.isActive and product.stock > 0}">
+									<span class="badge bg-success">Available</span>
+								</th:block>
+
+								<!-- Báo out of stock (nền vàng) khi Inactive HOẶC Stock <= 0 -->
+								<th:block th:unless="${product.isActive and product.stock > 0}">
+									<span class="badge bg-warning text-white">out of stock</span>
+								</th:block>
+							</div>
+
+							<p class="mb-1">
+								<span class="fw-bold">Category : </span>[[${product.category}]]
+							</p>
+							<p class="mb-3">
+								<span class="fw-bold">Policy : </span>7 Days Replacement &
+								Return
+							</p>
+
+							<!-- Giá tiền $ động (Giá sau giảm, giá gốc, % giảm) -->
 							<p class="fs-5 mb-4">
-								<span class="fw-bold">Price : </span>
-								<span class="fs-4 fw-bold ms-2">$700</span>
-								<span class="text-decoration-line-through text-secondary ms-1">$1400</span>
-								<span class="fs-6 text-success fw-bold ms-1">50% off</span>
+								<span class="fw-bold">Price : </span> <span
+									class="fs-4 fw-bold ms-2">$[[${product.discountPrice}]]</span>
+								<span class="text-decoration-line-through text-secondary ms-1">$[[${product.price}]]</span>
+								<span class="fs-6 text-success fw-bold ms-1">[[${product.discount}]]%
+									off</span>
 							</p>
 
 							<!-- Các icon chính sách -->
 							<div class="row text-center mb-4">
 								<div class="col-md-4 text-success">
 									<i class="fa-solid fa-money-bill-wave fa-2x"></i>
-									<p class="mb-0 mt-1" style="font-size: 13px;">Cash On Delivery</p>
+									<p class="mb-0 mt-1" style="font-size: 13px;">Cash On
+										Delivery</p>
 								</div>
 								<div class="col-md-4 text-danger">
 									<i class="fa-solid fa-arrows-rotate fa-2x"></i>
-									<p class="mb-0 mt-1" style="font-size: 13px;">Return Available</p>
+									<p class="mb-0 mt-1" style="font-size: 13px;">Return
+										Available</p>
 								</div>
 								<div class="col-md-4 text-primary">
 									<i class="fa-solid fa-truck-fast fa-2x"></i>
@@ -58,8 +79,16 @@
 								</div>
 							</div>
 
-							<!-- Nút Add To Cart -->
-							<a href="#" class="btn btn-danger col-md-12 py-2 fs-5">Add To Cart</a>
+							<!-- Nút Add To Cart / Out of Stock -->
+							<th:block th:if="${product.isActive and product.stock > 0}">
+								<a href="#" class="btn btn-danger col-md-12 py-2 fs-5">Add
+									To Cart</a>
+							</th:block>
+							<th:block th:unless="${product.isActive and product.stock > 0}">
+								<a href="#"
+									class="btn btn-warning text-white col-md-12 py-2 fs-5 disabled">Out
+									of Stock</a>
+							</th:block>
 						</div>
 
 					</div>

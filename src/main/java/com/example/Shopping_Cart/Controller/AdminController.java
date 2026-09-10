@@ -57,24 +57,21 @@ public class AdminController {
 		String imageName = image.isEmpty() ? "default.jpg" : image.getOriginalFilename();
 		product.setImage(imageName);
 
+		double price = product.getPrice();
+		int discount = product.getDiscount() != null ? product.getDiscount() : 0;
+
+		double discountPrice = price - (price * discount / 100.0);
+		product.setDiscountPrice(discountPrice);
+
 		Product saveProduct = productService.saveProduct(product);
 
 		if (!ObjectUtils.isEmpty(saveProduct)) {
-
 			if (!image.isEmpty()) {
 				File saveFile = new ClassPathResource("static/img").getFile();
-
 				Path path = Paths.get(saveFile.getAbsolutePath() + File.separator + "product_img" + File.separator
 						+ image.getOriginalFilename());
-
-				File productDir = new File(saveFile.getAbsolutePath() + File.separator + "product_img");
-				if (!productDir.exists()) {
-					productDir.mkdirs();
-				}
-
 				Files.copy(image.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
 			}
-
 			session.setAttribute("succMsg", "Product Saved Successfully");
 		} else {
 			session.setAttribute("errorMsg", "Something wrong on server");
@@ -195,37 +192,22 @@ public class AdminController {
 	}
 
 	@GetMapping("/editProduct/{id}")
-	public String editProduct(@PathVariable int id, Model model) {
-		model.addAttribute("product", productService.getProductById(id));
-		model.addAttribute("categories", categoryService.getAllCategory());
+	public String editProduct(@PathVariable int id, Model m) {
+		m.addAttribute("product", productService.getProductById(id));
+		m.addAttribute("categories", categoryService.getAllCategory());
 		return "admin/edit_product";
 	}
 
 	@PostMapping("/updateProduct")
 	public String updateProduct(@ModelAttribute Product product, @RequestParam("file") MultipartFile image,
-			HttpSession session) throws IOException {
+			HttpSession session) {
 
-		Product oldProduct = productService.getProductById(product.getId());
-		String imageName = image.isEmpty() ? oldProduct.getImage() : image.getOriginalFilename();
-
-		oldProduct.setTitle(product.getTitle());
-		oldProduct.setCategory(product.getCategory());
-		oldProduct.setPrice(product.getPrice());
-		oldProduct.setStock(product.getStock());
-		oldProduct.setImage(imageName);
-
-		Product updateProduct = productService.saveProduct(oldProduct);
+		Product updateProduct = productService.updateProduct(product, image);
 
 		if (!ObjectUtils.isEmpty(updateProduct)) {
-			if (!image.isEmpty()) {
-				File saveFile = new ClassPathResource("static/img").getFile();
-				Path path = Paths.get(saveFile.getAbsolutePath() + File.separator + "product_img" + File.separator
-						+ image.getOriginalFilename());
-				Files.copy(image.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
-			}
 			session.setAttribute("succMsg", "Product updated successfully");
 		} else {
-			session.setAttribute("errorMsg", "Something wrong on server");
+			session.setAttribute("errorMsg", "Something went wrong on server");
 		}
 
 		return "redirect:/admin/editProduct/" + product.getId();
