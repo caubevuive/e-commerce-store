@@ -6,5 +6,7 @@ import com.example.Shopping_Cart.model.UserDtls;
 
 public interface UserRepository extends JpaRepository<UserDtls, Integer> {
 
-	public Boolean existsByEmail(String email);
+	UserDtls findByEmail(String email);
+
+	Boolean existsByEmail(String email);
 }

@@ -10,12 +10,10 @@
 		<div class="container my-5">
 			<div class="row align-items-center justify-content-center">
 
-
 				<div class="col-md-6 text-center">
 					<img alt="Login Illustration" th:src="@{/img/ecom.png}"
 						class="img-fluid" style="max-height: 380px; object-fit: contain;">
 				</div>
-
 
 				<div class="col-md-5">
 					<div class="card shadow-sm border">
@@ -23,28 +21,37 @@
 							<p class="fs-4 text-center mb-0">Login</p>
 						</div>
 						<div class="card-body">
-							<form>
+
+							<!-- Error Alert -->
+							<div th:if="${param.error}" class="alert alert-danger text-center p-2 mb-3" role="alert">
+								Invalid email or password!
+							</div>
+
+							<!-- Logout Alert -->
+							<div th:if="${param.logout}" class="alert alert-success text-center p-2 mb-3" role="alert">
+								You have been logged out successfully.
+							</div>
+
+							<form action="/login" method="post">
 								<div class="mb-3">
-									<label class="form-label">Email</label> <input
-										class="form-control" name="email" type="email">
+									<label class="form-label">Email</label> 
+									<input class="form-control" name="username" type="email" required>
 								</div>
 
 								<div class="mb-3">
-									<label class="form-label">Password</label> <input
-										class="form-control" name="password" type="password">
+									<label class="form-label">Password</label> 
+									<input class="form-control" name="password" type="password" required>
 								</div>
 
 								<button type="submit" class="btn bg-primary text-white w-100">Login</button>
 							</form>
 						</div>
 
-						<!-- Start Card Footer -->
+						<!-- Card Footer -->
 						<div class="card-footer text-center">
-							<a href="#" class="text-decoration-none">Forgot Password</a><br>
-							Don't have an account ? <a href="#" class="text-decoration-none">Create
-								one</a>
+							<a href="/forgot-password" class="text-decoration-none">Forgot Password?</a><br>
+							Don't have an account? <a href="/register" class="text-decoration-none">Create one</a>
 						</div>
-						<!-- End Card Footer -->
 
 					</div>
 				</div>

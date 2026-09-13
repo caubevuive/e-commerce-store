@@ -8,7 +8,7 @@ import java.nio.file.StandardCopyOption;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -23,10 +23,11 @@ public class UserServiceImpl implements UserService {
 	private UserRepository userRepository;
 
 	@Autowired
-	private BCryptPasswordEncoder passwordEncoder;
+	private PasswordEncoder passwordEncoder;
 
 	@Override
 	public UserDtls saveUser(UserDtls user, MultipartFile file) {
+
 		user.setRole("ROLE_USER");
 		user.setIsEnable(true);
 
@@ -38,16 +39,21 @@ public class UserServiceImpl implements UserService {
 		UserDtls saveUser = userRepository.save(user);
 
 		if (saveUser != null && !file.isEmpty()) {
+
 			try {
+
 				File saveFile = new ClassPathResource("static/img").getFile();
+
 				Path path = Paths.get(saveFile.getAbsolutePath() + File.separator + "profile_img" + File.separator
 						+ file.getOriginalFilename());
 
 				Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
+
 		return saveUser;
 	}
 
