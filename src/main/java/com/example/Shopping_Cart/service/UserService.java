@@ -9,4 +9,6 @@ public interface UserService {
 	public UserDtls saveUser(UserDtls user, MultipartFile file);
 
 	public Boolean existsEmail(String email);
+
+	public UserDtls getUserByEmail(String email);
 }

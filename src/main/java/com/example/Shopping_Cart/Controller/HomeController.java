@@ -1,5 +1,6 @@
 package com.example.Shopping_Cart.Controller;
 
+import java.security.Principal;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,21 @@ public class HomeController {
 	@Autowired
 	private UserService userService;
 
+	// Phương thức này chạy tự động trước mọi endpoint, giúp truyền dữ liệu dùng
+	// chung (User, Categories) ra mọi view
+	@ModelAttribute
+	public void getUserDetails(Principal p, Model m) {
+		if (p != null) {
+			String email = p.getName();
+			UserDtls userDtls = userService.getUserByEmail(email);
+			m.addAttribute("user", userDtls);
+		}
+
+		// Thêm danh sách Category vào Model toàn cục
+		List<Category> allActiveCategory = categoryService.getAllActiveCategory();
+		m.addAttribute("categorys", allActiveCategory);
+	}
+
 	@GetMapping("/")
 	public String index() {
 		return "index";
@@ -51,10 +67,9 @@ public class HomeController {
 
 	@GetMapping("/products")
 	public String products(Model m, @RequestParam(value = "category", defaultValue = "") String category) {
-		List<Category> categories = categoryService.getAllActiveCategory();
+
 		List<Product> products = productService.getAllActiveProducts(category);
 
-		m.addAttribute("categories", categories);
 		m.addAttribute("products", products);
 		m.addAttribute("paramValue", category);
 		return "product";
