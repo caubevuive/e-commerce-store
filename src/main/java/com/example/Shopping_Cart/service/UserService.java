@@ -1,5 +1,7 @@
 package com.example.Shopping_Cart.service;
 
+import java.util.List;
+
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.Shopping_Cart.model.UserDtls;
@@ -11,4 +13,8 @@ public interface UserService {
 	public Boolean existsEmail(String email);
 
 	public UserDtls getUserByEmail(String email);
+
+	public List<UserDtls> getUsers(String role);
+
+	public Boolean updateAccountStatus(Integer id, Boolean status);
 }

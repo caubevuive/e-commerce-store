@@ -8,88 +8,80 @@
 <body>
 	<section>
 		<div class="container p-5">
-			<p class="text-center fs-3 fw-bold text-primary mb-4">Admin
-				Dashboard</p>
-
+			<p class="text-center fs-3 fw-bold text-primary mb-4">Admin Dashboard</p>
+			
 			<div class="row g-4">
-				<!-- 1. Add Product -->
+				<!-- Add Product -->
 				<div class="col-md-4">
-					<a href="/admin/loadAddProduct" class="text-decoration-none">
-						<div class="card card-sh text-center p-3">
-							<div class="card-body">
-								<i class="fa-solid fa-square-plus fa-3x text-primary"></i>
-								<p class="fs-5 fw-bold text-primary mt-2 mb-0">Add Product</p>
-								<p class="text-muted">-----------</p>
+					<a th:href="@{/admin/loadAddProduct}" class="text-decoration-none">
+						<div class="card shadow-sm border-0 text-center p-3 h-100 me-card">
+							<div class="card-body text-primary">
+								<i class="fa-solid fa-square-plus fa-3x mb-2"></i>
+								<h5 class="fw-bold">Add Product</h5>
 							</div>
 						</div>
 					</a>
 				</div>
 
-				<!-- 2. Category -->
+				<!-- Category -->
 				<div class="col-md-4">
-					<a href="/admin/category" class="text-decoration-none">
-						<div class="card card-sh text-center p-3">
-							<div class="card-body">
-								<i class="fa-solid fa-right-to-bracket fa-3x text-primary"></i>
-								<p class="fs-5 fw-bold text-primary mt-2 mb-0">Category</p>
-								<p class="text-muted">-----------</p>
+					<a th:href="@{/admin/category}" class="text-decoration-none">
+						<div class="card shadow-sm border-0 text-center p-3 h-100 me-card">
+							<div class="card-body text-primary">
+								<i class="fa-solid fa-list-check fa-3x mb-2"></i>
+								<h5 class="fw-bold">Category</h5>
 							</div>
 						</div>
 					</a>
 				</div>
 
-				<!-- 3. View Product -->
+				<!-- View Product -->
 				<div class="col-md-4">
 					<a th:href="@{/admin/products}" class="text-decoration-none">
-						<div class="card card-sh text-center p-3">
-							<div class="card-body">
-								<i class="fa-solid fa-book-open fa-3x text-danger"></i>
-								<p class="fs-5 fw-bold text-primary mt-2 mb-0">View Product</p>
-								<p class="text-muted">-----------</p>
+						<div class="card shadow-sm border-0 text-center p-3 h-100 me-card">
+							<div class="card-body text-danger">
+								<i class="fa-solid fa-book-open fa-3x mb-2"></i>
+								<h5 class="fw-bold">View Product</h5>
 							</div>
 						</div>
 					</a>
 				</div>
 
-				<!-- 4. Orders -->
+				<!-- Orders -->
 				<div class="col-md-4">
-					<a href="#" class="text-decoration-none">
-						<div class="card card-sh text-center p-3">
-							<div class="card-body">
-								<i class="fa-solid fa-box-open fa-3x text-warning"></i>
-								<p class="fs-5 fw-bold text-primary mt-2 mb-0">Orders</p>
-								<p class="text-muted">-----------</p>
+					<a th:href="@{#}" class="text-decoration-none">
+						<div class="card shadow-sm border-0 text-center p-3 h-100 me-card">
+							<div class="card-body text-warning">
+								<i class="fa-solid fa-box-archive fa-3x mb-2"></i>
+								<h5 class="fw-bold">Orders</h5>
 							</div>
 						</div>
 					</a>
 				</div>
 
-				<!-- 5. User -->
+				<!-- User Management -->
 				<div class="col-md-4">
-					<a href="#" class="text-decoration-none">
-						<div class="card card-sh text-center p-3">
-							<div class="card-body">
-								<i class="fa-solid fa-user fa-3x text-primary"></i>
-								<p class="fs-5 fw-bold text-primary mt-2 mb-0">User</p>
-								<p class="text-muted">-----------</p>
+					<a th:href="@{/admin/users}" class="text-decoration-none">
+						<div class="card shadow-sm border-0 text-center p-3 h-100 me-card">
+							<div class="card-body text-primary">
+								<i class="fa-solid fa-user-gear fa-3x mb-2"></i>
+								<h5 class="fw-bold">User</h5>
 							</div>
 						</div>
 					</a>
 				</div>
 
-				<!-- 6. Add Admin -->
+				<!-- Add Admin -->
 				<div class="col-md-4">
-					<a href="#" class="text-decoration-none">
-						<div class="card card-sh text-center p-3">
-							<div class="card-body">
-								<i class="fa-solid fa-user-plus fa-3x text-primary"></i>
-								<p class="fs-5 fw-bold text-primary mt-2 mb-0">Add Admin</p>
-								<p class="text-muted">-----------</p>
+					<a th:href="@{#}" class="text-decoration-none">
+						<div class="card shadow-sm border-0 text-center p-3 h-100 me-card">
+							<div class="card-body text-primary">
+								<i class="fa-solid fa-user-plus fa-3x mb-2"></i>
+								<h5 class="fw-bold">Add Admin</h5>
 							</div>
 						</div>
 					</a>
 				</div>
-
 			</div>
 		</div>
 	</section>

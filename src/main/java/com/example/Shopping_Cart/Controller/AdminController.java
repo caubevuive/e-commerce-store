@@ -23,8 +23,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.example.Shopping_Cart.model.Category;
 import com.example.Shopping_Cart.model.Product;
+import com.example.Shopping_Cart.model.UserDtls;
 import com.example.Shopping_Cart.service.CategoryService;
 import com.example.Shopping_Cart.service.ProductService;
+import com.example.Shopping_Cart.service.UserService;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -37,6 +39,9 @@ public class AdminController {
 
 	@Autowired
 	private ProductService productService;
+
+	@Autowired
+	private UserService userService;
 
 	@GetMapping("/")
 	public String index() {
@@ -211,5 +216,23 @@ public class AdminController {
 		}
 
 		return "redirect:/admin/editProduct/" + product.getId();
+	}
+
+	@GetMapping("/users")
+	public String getUsers(Model m) {
+		List<UserDtls> users = userService.getUsers("ROLE_USER");
+		m.addAttribute("users", users);
+		return "admin/users";
+	}
+
+	@GetMapping("/updateSts")
+	public String updateUserAccountStatus(@RequestParam Boolean status, @RequestParam Integer id, HttpSession session) {
+		Boolean updateStatus = userService.updateAccountStatus(id, status);
+		if (updateStatus) {
+			session.setAttribute("succMsg", "Account status updated successfully");
+		} else {
+			session.setAttribute("errorMsg", "Something went wrong on server");
+		}
+		return "redirect:/admin/users";
 	}
 }

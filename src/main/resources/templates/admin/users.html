@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	th:replace="~{base::layout(~{::section})}">
+<head>
+<meta charset="UTF-8">
+<title>User Management</title>
+</head>
+<body>
+	<section>
+		<div class="container-fluid mt-4">
+			<div class="card shadow-sm">
+				<div class="card-header text-center fs-4 bg-primary text-white">
+					User Details
+				</div>
+				<div class="card-body">
+					
+					<!-- Alert Messages -->
+					<div th:if="${session.succMsg}" class="alert alert-success alert-dismissible fade show" role="alert">
+						[[${session.succMsg}]]
+						<th:block th:text="${@commonServiceImpl.removeSessionMessage()}"></th:block>
+					</div>
+					<div th:if="${session.errorMsg}" class="alert alert-danger alert-dismissible fade show" role="alert">
+						[[${session.errorMsg}]]
+						<th:block th:text="${@commonServiceImpl.removeSessionMessage()}"></th:block>
+					</div>
+
+					<!-- Users Table -->
+					<table class="table table-bordered table-hover mt-3 align-middle text-center">
+						<thead class="table-light">
+							<tr>
+								<th>Sl No</th>
+								<th>Profile</th>
+								<th>Name</th>
+								<th>Email</th>
+								<th>Mobile Number</th>
+								<th>Address</th>
+								<th>Status</th>
+								<th>Action</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="u, c : ${users}">
+								<td>[[${c.count}]]</td>
+								<td>
+									<img th:src="@{'/img/profile_img/' + ${u.profileImage}}" 
+										 width="50px" height="50px" class="rounded-circle" style="object-fit: cover;">
+								</td>
+								<td>[[${u.name}]]</td>
+								<td>[[${u.email}]]</td>
+								<td>[[${u.mobileNumber}]]</td>
+								<td>[[${u.address + ', ' + u.city + ', ' + u.state + ' - ' + u.pincode}]]</td>
+								<td>
+									<span th:if="${u.isEnable}" class="badge bg-success">Active</span>
+									<span th:unless="${u.isEnable}" class="badge bg-danger">Inactive</span>
+								</td>
+								<td>
+									<a th:if="${u.isEnable}" 
+									   th:href="@{'/admin/updateSts?status=false&id=' + ${u.id}}" 
+									   class="btn btn-sm btn-danger">Block</a>
+									
+									<a th:unless="${u.isEnable}" 
+									   th:href="@{'/admin/updateSts?status=true&id=' + ${u.id}}" 
+									   class="btn btn-sm btn-primary">Unblock</a>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</section>
+</body>
+</html>
