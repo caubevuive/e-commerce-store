@@ -29,14 +29,18 @@ public class UserDtls {
 	private Boolean accountNonLocked = true;
 	private Integer failedAttempt = 0;
 	private Date lockTime;
-	private Integer lockDuration = 0; // Thời gian khóa tính theo phút (0, 1, 3, 5,...)
+	private Integer lockDuration = 0;
+
+	private String resetToken;
+	private Date tokenExpiration;
 
 	public UserDtls() {
 	}
 
 	public UserDtls(Integer id, String name, String mobileNumber, String email, String address, String city,
 			String state, String pincode, String password, String profileImage, String role, Boolean isEnable,
-			Boolean accountNonLocked, Integer failedAttempt, Date lockTime, Integer lockDuration) {
+			Boolean accountNonLocked, Integer failedAttempt, Date lockTime, Integer lockDuration, String resetToken,
+			Date tokenExpiration) {
 		this.id = id;
 		this.name = name;
 		this.mobileNumber = mobileNumber;
@@ -53,6 +57,8 @@ public class UserDtls {
 		this.failedAttempt = failedAttempt != null ? failedAttempt : 0;
 		this.lockTime = lockTime;
 		this.lockDuration = lockDuration != null ? lockDuration : 0;
+		this.resetToken = resetToken;
+		this.tokenExpiration = tokenExpiration;
 	}
 
 	public Integer getId() {
@@ -181,5 +187,21 @@ public class UserDtls {
 
 	public void setLockDuration(Integer lockDuration) {
 		this.lockDuration = lockDuration;
+	}
+
+	public String getResetToken() {
+		return resetToken;
+	}
+
+	public void setResetToken(String resetToken) {
+		this.resetToken = resetToken;
+	}
+
+	public Date getTokenExpiration() {
+		return tokenExpiration;
+	}
+
+	public void setTokenExpiration(Date tokenExpiration) {
+		this.tokenExpiration = tokenExpiration;
 	}
 }

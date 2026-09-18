@@ -19,6 +19,8 @@ public interface UserRepository extends JpaRepository<UserDtls, Integer> {
 
 	List<UserDtls> findByRole(String role);
 
+	UserDtls findByResetToken(String resetToken);
+
 	@Modifying
 	@Transactional
 	@Query("UPDATE UserDtls u SET u.failedAttempt = ?1 WHERE u.email = ?2")

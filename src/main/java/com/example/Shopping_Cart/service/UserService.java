@@ -25,4 +25,10 @@ public interface UserService {
 	public void lock(UserDtls user);
 
 	public boolean unlockWhenTimeExpired(UserDtls user);
+
+	public void updateUserResetToken(String email, String token);
+
+	public UserDtls getUserByToken(String token);
+
+	public void updateUserPassword(UserDtls user, String newPassword);
 }

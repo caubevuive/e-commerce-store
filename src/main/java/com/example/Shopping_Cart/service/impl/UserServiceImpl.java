@@ -105,7 +105,7 @@ public class UserServiceImpl implements UserService {
 		UserDtls user = userRepository.findByEmail(email);
 		if (user != null) {
 			user.setFailedAttempt(0);
-			user.setLockDuration(0); // Reset mức phạt về ban đầu khi nhập đúng
+			user.setLockDuration(0);
 			userRepository.save(user);
 		}
 	}
@@ -115,7 +115,6 @@ public class UserServiceImpl implements UserService {
 		int currentDuration = user.getLockDuration() != null ? user.getLockDuration() : 0;
 		int nextDuration;
 
-		// Logic tính thời gian khóa tăng dần: 0 -> 1p -> 3p -> 5p -> 7p...
 		if (currentDuration == 0) {
 			nextDuration = 1;
 		} else if (currentDuration == 1) {
@@ -148,5 +147,27 @@ public class UserServiceImpl implements UserService {
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	public void updateUserResetToken(String email, String token) {
+		UserDtls user = userRepository.findByEmail(email);
+		if (user != null) {
+			user.setResetToken(token);
+			userRepository.save(user);
+		}
+	}
+
+	@Override
+	public UserDtls getUserByToken(String token) {
+		return userRepository.findByResetToken(token);
+	}
+
+	@Override
+	public void updateUserPassword(UserDtls user, String newPassword) {
+		String encodedPassword = passwordEncoder.encode(newPassword);
+		user.setPassword(encodedPassword);
+		user.setResetToken(null);
+		userRepository.save(user);
 	}
 }

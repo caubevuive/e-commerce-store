@@ -2,6 +2,7 @@ package com.example.Shopping_Cart.Controller;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -18,9 +19,11 @@ import com.example.Shopping_Cart.model.Category;
 import com.example.Shopping_Cart.model.Product;
 import com.example.Shopping_Cart.model.UserDtls;
 import com.example.Shopping_Cart.service.CategoryService;
+import com.example.Shopping_Cart.service.CommonService;
 import com.example.Shopping_Cart.service.ProductService;
 import com.example.Shopping_Cart.service.UserService;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
@@ -35,8 +38,9 @@ public class HomeController {
 	@Autowired
 	private UserService userService;
 
-	// Phương thức này chạy tự động trước mọi endpoint, giúp truyền dữ liệu dùng
-	// chung (User, Categories) ra mọi view
+	@Autowired
+	private CommonService commonService;
+
 	@ModelAttribute
 	public void getUserDetails(Principal p, Model m) {
 		if (p != null) {
@@ -45,7 +49,6 @@ public class HomeController {
 			m.addAttribute("user", userDtls);
 		}
 
-		// Thêm danh sách Category vào Model toàn cục
 		List<Category> allActiveCategory = categoryService.getAllActiveCategory();
 		m.addAttribute("categorys", allActiveCategory);
 	}
@@ -89,17 +92,70 @@ public class HomeController {
 		Boolean existsEmail = userService.existsEmail(user.getEmail());
 
 		if (existsEmail) {
-			session.setAttribute("errorMsg", "Email already exists");
+			session.setAttribute("errorMsg", "Email already exists!");
 		} else {
 			UserDtls saveUser = userService.saveUser(user, file);
 
 			if (!ObjectUtils.isEmpty(saveUser)) {
-				session.setAttribute("succMsg", "Register successfully");
+				session.setAttribute("succMsg", "Registered successfully!");
 			} else {
-				session.setAttribute("errorMsg", "Something wrong on server");
+				session.setAttribute("errorMsg", "Something went wrong on server!");
 			}
 		}
 
 		return "redirect:/register";
+	}
+
+	@GetMapping("/forgot-password")
+	public String showForgotPassword() {
+		return "forgot_password";
+	}
+
+	@PostMapping("/forgot-password")
+	public String processForgotPassword(@RequestParam String email, HttpServletRequest request, HttpSession session) {
+		UserDtls user = userService.getUserByEmail(email);
+
+		if (user != null) {
+			String token = UUID.randomUUID().toString();
+			userService.updateUserResetToken(email, token);
+
+			String resetLink = request.getRequestURL().toString().replace(request.getRequestURI(), "")
+					+ "/reset-password?token=" + token;
+
+			Boolean sendMail = commonService.sendMail(resetLink, email);
+			if (sendMail) {
+				session.setAttribute("succMsg", "Password reset link has been sent to your email!");
+			} else {
+				session.setAttribute("errorMsg", "Failed to send email. Please check server settings!");
+			}
+		} else {
+			session.setAttribute("errorMsg", "Email address not found!");
+		}
+		return "redirect:/forgot-password";
+	}
+
+	@GetMapping("/reset-password")
+	public String showResetPassword(@RequestParam String token, Model m) {
+		UserDtls user = userService.getUserByToken(token);
+
+		if (user == null) {
+			m.addAttribute("msg", "Your token is invalid or has expired!");
+			return "message";
+		}
+		m.addAttribute("token", token);
+		return "reset_password";
+	}
+
+	@PostMapping("/reset-password")
+	public String processResetPassword(@RequestParam String token, @RequestParam String password, HttpSession session) {
+		UserDtls user = userService.getUserByToken(token);
+
+		if (user == null) {
+			session.setAttribute("errorMsg", "Your token is invalid or has expired!");
+		} else {
+			userService.updateUserPassword(user, password);
+			session.setAttribute("succMsg", "Password reset successfully! Please login.");
+		}
+		return "redirect:/signin";
 	}
 }
