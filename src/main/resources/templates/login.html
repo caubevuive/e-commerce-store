@@ -24,7 +24,12 @@
 
 							<!-- Error Alert -->
 							<div th:if="${param.error}" class="alert alert-danger text-center p-2 mb-3" role="alert">
-								Invalid email or password!
+								<th:block th:if="${session.SPRING_SECURITY_LAST_EXCEPTION != null}">
+									[[${session.SPRING_SECURITY_LAST_EXCEPTION.message}]]
+								</th:block>
+								<th:block th:if="${session.SPRING_SECURITY_LAST_EXCEPTION == null}">
+									Invalid email or password!
+								</th:block>
 							</div>
 
 							<!-- Logout Alert -->

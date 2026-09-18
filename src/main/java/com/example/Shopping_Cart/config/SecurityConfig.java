@@ -6,21 +6,20 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 @Configuration
 public class SecurityConfig {
 
 	@Autowired
-	private AuthenticationSuccessHandler customSuccessHandler;
+	private AuthSuccessHandlerImpl authenticationSuccessHandler;
 
-	@Bean
-	public PasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder();
-	}
+	@Autowired
+	private AuthFailureHandlerImpl authenticationFailureHandler;
+
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 
 	@Bean
 	public UserDetailsService userDetailsService() {
@@ -31,7 +30,7 @@ public class SecurityConfig {
 	public DaoAuthenticationProvider authenticationProvider() {
 		DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
 		daoAuthenticationProvider.setUserDetailsService(userDetailsService());
-		daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
+		daoAuthenticationProvider.setPasswordEncoder(passwordEncoder);
 		return daoAuthenticationProvider;
 	}
 
@@ -44,7 +43,8 @@ public class SecurityConfig {
 						.permitAll().requestMatchers("/user/**").hasRole("USER").requestMatchers("/admin/**")
 						.hasRole("ADMIN").anyRequest().authenticated())
 				.formLogin(form -> form.loginPage("/signin").loginProcessingUrl("/login")
-						.successHandler(customSuccessHandler).permitAll())
+						.successHandler(authenticationSuccessHandler).failureHandler(authenticationFailureHandler)
+						.permitAll())
 				.logout(logout -> logout.logoutUrl("/logout").logoutSuccessUrl("/signin?logout").permitAll());
 
 		return http.build();

@@ -1,5 +1,7 @@
 package com.example.Shopping_Cart.model;
 
+import java.util.Date;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -24,11 +26,17 @@ public class UserDtls {
 	private String role;
 	private Boolean isEnable;
 
+	private Boolean accountNonLocked = true;
+	private Integer failedAttempt = 0;
+	private Date lockTime;
+	private Integer lockDuration = 0; // Thời gian khóa tính theo phút (0, 1, 3, 5,...)
+
 	public UserDtls() {
 	}
 
 	public UserDtls(Integer id, String name, String mobileNumber, String email, String address, String city,
-			String state, String pincode, String password, String profileImage, String role, Boolean isEnable) {
+			String state, String pincode, String password, String profileImage, String role, Boolean isEnable,
+			Boolean accountNonLocked, Integer failedAttempt, Date lockTime, Integer lockDuration) {
 		this.id = id;
 		this.name = name;
 		this.mobileNumber = mobileNumber;
@@ -41,6 +49,10 @@ public class UserDtls {
 		this.profileImage = profileImage;
 		this.role = role;
 		this.isEnable = isEnable;
+		this.accountNonLocked = accountNonLocked != null ? accountNonLocked : true;
+		this.failedAttempt = failedAttempt != null ? failedAttempt : 0;
+		this.lockTime = lockTime;
+		this.lockDuration = lockDuration != null ? lockDuration : 0;
 	}
 
 	public Integer getId() {
@@ -137,5 +149,37 @@ public class UserDtls {
 
 	public void setIsEnable(Boolean isEnable) {
 		this.isEnable = isEnable;
+	}
+
+	public Boolean getAccountNonLocked() {
+		return accountNonLocked;
+	}
+
+	public void setAccountNonLocked(Boolean accountNonLocked) {
+		this.accountNonLocked = accountNonLocked;
+	}
+
+	public Integer getFailedAttempt() {
+		return failedAttempt;
+	}
+
+	public void setFailedAttempt(Integer failedAttempt) {
+		this.failedAttempt = failedAttempt;
+	}
+
+	public Date getLockTime() {
+		return lockTime;
+	}
+
+	public void setLockTime(Date lockTime) {
+		this.lockTime = lockTime;
+	}
+
+	public Integer getLockDuration() {
+		return lockDuration;
+	}
+
+	public void setLockDuration(Integer lockDuration) {
+		this.lockDuration = lockDuration;
 	}
 }
