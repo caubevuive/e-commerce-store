@@ -9,6 +9,19 @@
 	<section>
 		<div class="container p-0" style="margin-top: 10px;">
 			<div class="card card-sh p-3">
+
+				<!-- ===== THÊM ĐOẠN HIỂN THỊ THÔNG BÀO NÀY VÀO ĐÂY ===== -->
+				<div class="col-md-12">
+					<th:block th:if="${session.succMsg}">
+						<p class="text-success fw-bold text-center fs-5">[[${session.succMsg}]]</p>
+					</th:block>
+
+					<th:block th:if="${session.errorMsg}">
+						<p class="text-danger fw-bold text-center fs-5">[[${session.errorMsg}]]</p>
+					</th:block>
+				</div>
+				<!-- ================================================= -->
+
 				<div class="card-body p-1">
 					<div class="row">
 
@@ -79,15 +92,16 @@
 								</div>
 							</div>
 
-							<!-- Nút Add To Cart / Out of Stock -->
+							<!-- Nút Add To Cart -->
 							<th:block th:if="${product.isActive and product.stock > 0}">
-								<a href="#" class="btn btn-danger col-md-12 py-2 fs-5">Add
-									To Cart</a>
-							</th:block>
-							<th:block th:unless="${product.isActive and product.stock > 0}">
-								<a href="#"
-									class="btn btn-warning text-white col-md-12 py-2 fs-5 disabled">Out
-									of Stock</a>
+								<!-- Nếu đã đăng nhập, gọi vào /add-cart kèm pid và uid -->
+								<a th:if="${user != null}"
+									th:href="@{'/add-cart?pid=' + ${product.id} + '&uid=' + ${user.id}}"
+									class="btn btn-danger col-md-12 py-2 fs-5">Add To Cart</a>
+
+								<!-- Nếu chưa đăng nhập, chuyển hướng sang trang đăng nhập -->
+								<a th:unless="${user != null}" href="/signin"
+									class="btn btn-danger col-md-12 py-2 fs-5">Add To Cart</a>
 							</th:block>
 						</div>
 

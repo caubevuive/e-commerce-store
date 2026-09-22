@@ -13,7 +13,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.Shopping_Cart.model.Cart;
 import com.example.Shopping_Cart.model.Product;
+import com.example.Shopping_Cart.repository.CartRepository;
 import com.example.Shopping_Cart.repository.ProductRepository;
 import com.example.Shopping_Cart.service.ProductService;
 
@@ -22,6 +24,9 @@ public class ProductServiceImpl implements ProductService {
 
 	@Autowired
 	private ProductRepository productRepository;
+
+	@Autowired
+	private CartRepository cartRepository;
 
 	@Override
 	public Product saveProduct(Product product) {
@@ -42,6 +47,12 @@ public class ProductServiceImpl implements ProductService {
 	public Boolean deleteProduct(Integer id) {
 		Product product = productRepository.findById(id).orElse(null);
 		if (!ObjectUtils.isEmpty(product)) {
+
+			List<Cart> carts = cartRepository.findByProductId(id);
+			if (!ObjectUtils.isEmpty(carts)) {
+				cartRepository.deleteAll(carts);
+			}
+
 			productRepository.delete(product);
 			return true;
 		}
@@ -94,10 +105,10 @@ public class ProductServiceImpl implements ProductService {
 		List<Product> products = null;
 
 		if (ObjectUtils.isEmpty(category)) {
-			// Lấy tất cả sản phẩm đang Active (Bỏ các sp Inactive khỏi trang All)
+
 			products = productRepository.findByIsActiveTrue();
 		} else {
-			// Lấy sản phẩm theo Category VÀ bắt buộc isActive = true
+
 			products = productRepository.findByCategoryAndIsActiveTrueIgnoreCase(category.trim());
 		}
 

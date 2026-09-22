@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	th:replace="~{base::layout(~{::section})}">
+<head>
+<meta charset="ISO-8859-1">
+<title>Cart Page</title>
+</head>
+<body>
+	<section>
+		<div class="container p-5">
+			<div class="card shadow-sm">
+				<div class="card-body">
+					<p class="fs-3 text-center fw-bold">Cart Page</p>
+					
+					<!-- Thông báo thành công -->
+					<div th:if="${session.succMsg}" class="alert alert-success text-center" role="alert" th:text="${session.succMsg}"></div>
+
+					<!-- Thông báo lỗi -->
+					<div th:if="${session.errorMsg}" class="alert alert-danger text-center" role="alert" th:text="${session.errorMsg}"></div>
+
+					<table class="table">
+						<thead>
+							<tr>
+								<th scope="col">Image</th>
+								<th scope="col">Product Name</th>
+								<th scope="col">Price</th>
+								<th scope="col">Quantity</th>
+								<th scope="col">Total Price</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="cart : ${carts}">
+								<td>
+									<img th:src="@{'/img/product_img/' + ${cart.product.image}}" width="70px" height="70px" alt="Product Image">
+								</td>
+								<td th:text="${cart.product.title}">Product Name</td>
+								<td th:text="'$' + ${cart.product.discountPrice}">$0.0</td>
+								<td>
+									<!-- Dùng cú pháp URL an toàn của Thymeleaf (sy='de', cid=...) -->
+									<a class="btn btn-sm btn-success" th:href="@{/cart/quantityUpdate(sy='de', cid=${cart.id})}">-</a>
+									<span class="mx-2" th:text="${cart.quantity}">1</span>
+									<a class="btn btn-sm btn-success" th:href="@{/cart/quantityUpdate(sy='in', cid=${cart.id})}">+</a>
+								</td>
+								<td th:text="'$' + ${cart.totalPrice}">$0.0</td>
+							</tr>
+						</tbody>
+					</table>
+					
+					<div class="text-end">
+						<h4 th:text="'Total Price: $' + ${totalOrderPrice}">Total Price: $0.0</h4>
+						<a href="/orders" class="btn btn-warning">Proceed Checkout</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+</body>
+</html>

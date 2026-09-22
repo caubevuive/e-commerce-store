@@ -54,7 +54,7 @@
 				</ul>
 
 				<!-- Right Side Navigation Menu -->
-				<ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+				<ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center">
 
 					<th:block th:if="${user == null}">
 						<li class="nav-item"><a class="nav-link active"
@@ -67,6 +67,18 @@
 
 
 					<th:block th:if="${user != null}">
+
+						<!-- Nút Giỏ hàng hiển thị cho User thường -->
+						<li class="nav-item me-3"
+							th:if="${user.role == 'ROLE_USER' or user.role == 'USER'}">
+							<a class="nav-link active position-relative" href="/cart"> <i
+								class="fa-solid fa-cart-shopping"></i> Cart <span
+								class="position-absolute top-25 start-100 translate-middle badge rounded-pill bg-danger"
+								th:text="${countCart != null ? countCart : 0}"> 0 </span>
+						</a>
+						</li>
+
+						<!-- Dropdown tài khoản -->
 						<li class="nav-item dropdown"><a
 							class="nav-link dropdown-toggle active" href="#" role="button"
 							data-bs-toggle="dropdown" aria-expanded="false"> <i
@@ -79,6 +91,7 @@
 										class="fa-solid fa-user-gear me-2"></i>Admin Dashboard</a>
 								</li>
 
+								<!-- Menu cho User -->
 								<li th:if="${user.role == 'ROLE_USER' or user.role == 'USER'}">
 									<a class="dropdown-item" href="/user/"><i
 										class="fa-solid fa-id-card me-2"></i>My Profile</a>

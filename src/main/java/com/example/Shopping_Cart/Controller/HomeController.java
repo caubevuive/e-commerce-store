@@ -15,9 +15,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.Shopping_Cart.model.Cart;
 import com.example.Shopping_Cart.model.Category;
 import com.example.Shopping_Cart.model.Product;
 import com.example.Shopping_Cart.model.UserDtls;
+import com.example.Shopping_Cart.service.CartService;
 import com.example.Shopping_Cart.service.CategoryService;
 import com.example.Shopping_Cart.service.CommonService;
 import com.example.Shopping_Cart.service.ProductService;
@@ -41,12 +43,20 @@ public class HomeController {
 	@Autowired
 	private CommonService commonService;
 
+	@Autowired
+	private CartService cartService;
+
 	@ModelAttribute
 	public void getUserDetails(Principal p, Model m) {
 		if (p != null) {
 			String email = p.getName();
 			UserDtls userDtls = userService.getUserByEmail(email);
 			m.addAttribute("user", userDtls);
+
+			List<Cart> carts = cartService.getCartsByUser(userDtls.getId());
+			m.addAttribute("countCart", carts.size());
+		} else {
+			m.addAttribute("countCart", 0);
 		}
 
 		List<Category> allActiveCategory = categoryService.getAllActiveCategory();
@@ -70,9 +80,7 @@ public class HomeController {
 
 	@GetMapping("/products")
 	public String products(Model m, @RequestParam(value = "category", defaultValue = "") String category) {
-
 		List<Product> products = productService.getAllActiveProducts(category);
-
 		m.addAttribute("products", products);
 		m.addAttribute("paramValue", category);
 		return "product";
@@ -85,10 +93,21 @@ public class HomeController {
 		return "view_product";
 	}
 
+	@GetMapping("/add-cart")
+	public String addToCart(@RequestParam Integer pid, @RequestParam Integer uid, HttpSession session) {
+		Cart saveCart = cartService.saveCart(pid, uid);
+
+		if (saveCart != null) {
+			session.setAttribute("succMsg", "Product added to cart successfully");
+		} else {
+			session.setAttribute("errorMsg", "Failed to add product to cart");
+		}
+		return "redirect:/product/" + pid;
+	}
+
 	@PostMapping("/saveUser")
 	public String saveUser(@ModelAttribute UserDtls user, @RequestParam("img") MultipartFile file,
 			HttpSession session) {
-
 		Boolean existsEmail = userService.existsEmail(user.getEmail());
 
 		if (existsEmail) {
@@ -102,7 +121,6 @@ public class HomeController {
 				session.setAttribute("errorMsg", "Something went wrong on server!");
 			}
 		}
-
 		return "redirect:/register";
 	}
 
@@ -157,5 +175,30 @@ public class HomeController {
 			session.setAttribute("succMsg", "Password reset successfully! Please login.");
 		}
 		return "redirect:/signin";
+	}
+
+	@GetMapping("/cart")
+	public String loadCartPage(Principal p, Model m) {
+		UserDtls user = userService.getUserByEmail(p.getName());
+		List<Cart> carts = cartService.getCartsByUser(user.getId());
+		m.addAttribute("carts", carts);
+
+		double totalOrderPrice = 0.0;
+		if (carts != null && !carts.isEmpty()) {
+			for (Cart c : carts) {
+				if (c.getProduct() != null && c.getProduct().getDiscountPrice() != null) {
+					totalOrderPrice += c.getProduct().getDiscountPrice() * c.getQuantity();
+				}
+			}
+		}
+		m.addAttribute("totalOrderPrice", totalOrderPrice);
+
+		return "cart";
+	}
+
+	@GetMapping("/cart/quantityUpdate")
+	public String updateQuantity(@RequestParam String sy, @RequestParam Integer cid) {
+		cartService.updateQuantity(sy, cid);
+		return "redirect:/cart";
 	}
 }
