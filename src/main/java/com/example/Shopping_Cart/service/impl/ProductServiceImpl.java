@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.example.Shopping_Cart.model.Cart;
 import com.example.Shopping_Cart.model.Product;
 import com.example.Shopping_Cart.repository.CartRepository;
 import com.example.Shopping_Cart.repository.ProductRepository;
@@ -30,30 +29,35 @@ public class ProductServiceImpl implements ProductService {
 
 	@Override
 	public Product saveProduct(Product product) {
+		if (product.getIsDelete() == null) {
+			product.setIsDelete(false);
+		}
+		if (product.getIsActive() == null) {
+			product.setIsActive(true);
+		}
 		return productRepository.save(product);
 	}
 
 	@Override
 	public List<Product> getAllproducts() {
-		return productRepository.findAll();
+		List<Product> list = productRepository.findAll();
+
+		return list.stream().filter(p -> p.getIsDelete() == null || !p.getIsDelete()).toList();
 	}
 
 	@Override
 	public List<Product> getAllProducts() {
-		return productRepository.findAll();
+		List<Product> list = productRepository.findAll();
+
+		return list.stream().filter(p -> p.getIsDelete() == null || !p.getIsDelete()).toList();
 	}
 
 	@Override
 	public Boolean deleteProduct(Integer id) {
 		Product product = productRepository.findById(id).orElse(null);
 		if (!ObjectUtils.isEmpty(product)) {
-
-			List<Cart> carts = cartRepository.findByProductId(id);
-			if (!ObjectUtils.isEmpty(carts)) {
-				cartRepository.deleteAll(carts);
-			}
-
-			productRepository.delete(product);
+			product.setIsDelete(true);
+			productRepository.save(product);
 			return true;
 		}
 		return false;
@@ -68,7 +72,7 @@ public class ProductServiceImpl implements ProductService {
 	public Product updateProduct(Product product, MultipartFile image) {
 		Product dbProduct = getProductById(product.getId());
 
-		String imageName = image.isEmpty() ? dbProduct.getImage() : image.getOriginalFilename();
+		String imageName = (image == null || image.isEmpty()) ? dbProduct.getImage() : image.getOriginalFilename();
 
 		dbProduct.setTitle(product.getTitle());
 		dbProduct.setDescription(product.getDescription());
@@ -86,7 +90,7 @@ public class ProductServiceImpl implements ProductService {
 		Product updateProduct = productRepository.save(dbProduct);
 
 		if (!ObjectUtils.isEmpty(updateProduct)) {
-			if (!image.isEmpty()) {
+			if (image != null && !image.isEmpty()) {
 				try {
 					File saveFile = new ClassPathResource("static/img/product_img").getFile();
 					Path path = Paths.get(saveFile.getAbsolutePath() + File.separator + image.getOriginalFilename());
@@ -105,13 +109,11 @@ public class ProductServiceImpl implements ProductService {
 		List<Product> products = null;
 
 		if (ObjectUtils.isEmpty(category)) {
-
 			products = productRepository.findByIsActiveTrue();
 		} else {
-
 			products = productRepository.findByCategoryAndIsActiveTrueIgnoreCase(category.trim());
 		}
 
-		return products;
+		return products.stream().filter(p -> p.getIsDelete() == null || !p.getIsDelete()).toList();
 	}
 }

@@ -176,29 +176,4 @@ public class HomeController {
 		}
 		return "redirect:/signin";
 	}
-
-	@GetMapping("/cart")
-	public String loadCartPage(Principal p, Model m) {
-		UserDtls user = userService.getUserByEmail(p.getName());
-		List<Cart> carts = cartService.getCartsByUser(user.getId());
-		m.addAttribute("carts", carts);
-
-		double totalOrderPrice = 0.0;
-		if (carts != null && !carts.isEmpty()) {
-			for (Cart c : carts) {
-				if (c.getProduct() != null && c.getProduct().getDiscountPrice() != null) {
-					totalOrderPrice += c.getProduct().getDiscountPrice() * c.getQuantity();
-				}
-			}
-		}
-		m.addAttribute("totalOrderPrice", totalOrderPrice);
-
-		return "cart";
-	}
-
-	@GetMapping("/cart/quantityUpdate")
-	public String updateQuantity(@RequestParam String sy, @RequestParam Integer cid) {
-		cartService.updateQuantity(sy, cid);
-		return "redirect:/cart";
-	}
 }

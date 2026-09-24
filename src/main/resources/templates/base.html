@@ -71,14 +71,14 @@
 						<!-- Nút Giỏ hàng hiển thị cho User thường -->
 						<li class="nav-item me-3"
 							th:if="${user.role == 'ROLE_USER' or user.role == 'USER'}">
-							<a class="nav-link active position-relative" href="/cart"> <i
+							<a class="nav-link active position-relative" th:href="@{/user/cart}"> <i
 								class="fa-solid fa-cart-shopping"></i> Cart <span
 								class="position-absolute top-25 start-100 translate-middle badge rounded-pill bg-danger"
 								th:text="${countCart != null ? countCart : 0}"> 0 </span>
 						</a>
 						</li>
 
-						<!-- Dropdown tài khoản -->
+
 						<li class="nav-item dropdown"><a
 							class="nav-link dropdown-toggle active" href="#" role="button"
 							data-bs-toggle="dropdown" aria-expanded="false"> <i

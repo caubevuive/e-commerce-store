@@ -65,7 +65,10 @@ public class Cart {
 	}
 
 	public Double getTotalPrice() {
-		return totalPrice;
+		if (product != null && product.getDiscountPrice() != null && quantity != null) {
+			return product.getDiscountPrice() * quantity;
+		}
+		return 0.0;
 	}
 
 	public void setTotalPrice(Double totalPrice) {

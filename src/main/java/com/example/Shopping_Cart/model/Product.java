@@ -34,13 +34,14 @@ public class Product {
 	@Column(name = "is_active")
 	private Boolean isActive;
 
-	// Constructor rỗng
+	@Column(name = "is_delete")
+	private Boolean isDelete;
+
 	public Product() {
 	}
 
-	// Constructor đầy đủ
 	public Product(Integer id, String title, String description, String category, Double price, Integer stock,
-			String image, Integer discount, Double discountPrice, Boolean isActive) {
+			String image, Integer discount, Double discountPrice, Boolean isActive, Boolean isDelete) {
 
 		this.id = id;
 		this.title = title;
@@ -52,6 +53,7 @@ public class Product {
 		this.discount = discount;
 		this.discountPrice = discountPrice;
 		this.isActive = isActive;
+		this.isDelete = isDelete;
 	}
 
 	public Integer getId() {
@@ -132,5 +134,13 @@ public class Product {
 
 	public void setIsActive(Boolean isActive) {
 		this.isActive = isActive;
+	}
+
+	public Boolean getIsDelete() {
+		return isDelete;
+	}
+
+	public void setIsDelete(Boolean isDelete) {
+		this.isDelete = isDelete;
 	}
 }
