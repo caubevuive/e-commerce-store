@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.Shopping_Cart.model.Cart;
 import com.example.Shopping_Cart.model.OrderRequest;
+import com.example.Shopping_Cart.model.ProductOrder;
 import com.example.Shopping_Cart.model.UserDtls;
 import com.example.Shopping_Cart.service.CartService;
 import com.example.Shopping_Cart.service.OrderService;
@@ -93,5 +94,27 @@ public class UserController {
 	@GetMapping("/success")
 	public String loadSuccess() {
 		return "success";
+	}
+
+	@GetMapping("/my-orders")
+	public String myOrder(Principal p, Model m) {
+		UserDtls loginUser = userService.getUserByEmail(p.getName());
+		List<ProductOrder> orders = orderService.getOrdersByUser(loginUser.getId());
+		m.addAttribute("orders", orders);
+		return "user/my_orders";
+	}
+
+	@GetMapping("/update-status")
+	public String updateOrderStatus(@RequestParam Integer id, @RequestParam Integer st, HttpSession session) {
+		String[] statuses = { "Pending", "In Progress", "Delivered", "Cancelled" };
+		String status = statuses[st];
+
+		ProductOrder updateOrder = orderService.updateOrderStatus(id, status);
+		if (updateOrder != null) {
+			session.setAttribute("succMsg", "Status Updated Successfully");
+		} else {
+			session.setAttribute("errorMsg", "Something went wrong");
+		}
+		return "redirect:/user/my-orders";
 	}
 }

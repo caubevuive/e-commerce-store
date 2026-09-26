@@ -68,13 +68,22 @@
 
 					<th:block th:if="${user != null}">
 
-						<!-- Nút Giỏ hàng hiển thị cho User thường -->
+						
 						<li class="nav-item me-3"
 							th:if="${user.role == 'ROLE_USER' or user.role == 'USER'}">
-							<a class="nav-link active position-relative" th:href="@{/user/cart}"> <i
-								class="fa-solid fa-cart-shopping"></i> Cart <span
+							<a class="nav-link active position-relative"
+							th:href="@{/user/cart}"> <i class="fa-solid fa-cart-shopping"></i>
+								Cart <span
 								class="position-absolute top-25 start-100 translate-middle badge rounded-pill bg-danger"
 								th:text="${countCart != null ? countCart : 0}"> 0 </span>
+						</a>
+						</li>
+
+						
+						<li class="nav-item me-3"
+							th:if="${user.role == 'ROLE_USER' or user.role == 'USER'}">
+							<a class="nav-link active" th:href="@{/user/my-orders}"> <i
+								class="fa-solid fa-box-archive me-1"></i> My Orders
 						</a>
 						</li>
 
@@ -85,13 +94,13 @@
 								class="fa-solid fa-user me-1"></i>[[${user.name}]]
 						</a>
 							<ul class="dropdown-menu dropdown-menu-end">
-								<!-- Menu cho Admin -->
+								
 								<li th:if="${user.role == 'ROLE_ADMIN' or user.role == 'ADMIN'}">
 									<a class="dropdown-item" href="/admin/"><i
 										class="fa-solid fa-user-gear me-2"></i>Admin Dashboard</a>
 								</li>
 
-								<!-- Menu cho User -->
+								
 								<li th:if="${user.role == 'ROLE_USER' or user.role == 'USER'}">
 									<a class="dropdown-item" href="/user/"><i
 										class="fa-solid fa-id-card me-2"></i>My Profile</a>

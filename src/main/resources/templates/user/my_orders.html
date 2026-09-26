@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	th:replace="~{base::layout(~{::section})}">
+<head>
+<meta charset="UTF-8">
+<title>My Orders</title>
+</head>
+<body>
+	<section>
+		<div class="container mt-5 p-5">
+			<div class="row">
+				<div class="col-md-12">
+					<p class="fs-3 fw-bold text-center">My Orders</p>
+					
+					
+					<div th:if="${session.succMsg}" class="alert alert-success text-center" role="alert">
+						<span th:text="${session.succMsg}"></span>
+					</div>
+
+				
+					<div th:if="${session.errorMsg}" class="alert alert-danger text-center" role="alert">
+						<span th:text="${session.errorMsg}"></span>
+					</div>
+
+					<table class="table table-bordered mt-3 shadow-sm bg-white">
+						<thead class="table-light">
+							<tr class="text-center">
+								<th>Order Id</th>
+								<th>Date</th>
+								<th>Product Details</th>
+								<th>Price</th>
+								<th>Quantity</th>
+								<th>Status</th>
+								<th>Action</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="o : ${orders}" class="text-center align-middle">
+								<td th:text="${o.orderId}"></td>
+								<td th:text="${o.orderDate}"></td>
+								<td th:text="${o.product.title}"></td>
+								<td th:text="${'$' + o.price}"></td>
+								<td th:text="${o.quantity}"></td>
+								<td>
+									<span class="badge" 
+									      th:classappend="${o.status == 'Cancelled' ? 'bg-danger' : (o.status == 'Delivered' ? 'bg-success' : 'bg-warning text-dark')}"
+									      th:text="${o.status}"></span>
+								</td>
+								<td>
+									<th:block th:if="${o.status != 'Cancelled' && o.status != 'Delivered'}">
+										<a th:href="@{/user/update-status(id=${o.id}, st=3)}" 
+										   class="btn btn-sm btn-danger">Cancel</a>
+									</th:block>
+									<th:block th:unless="${o.status != 'Cancelled' && o.status != 'Delivered'}">
+										<span class="text-muted">N/A</span>
+									</th:block>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</section>
+</body>
+</html>

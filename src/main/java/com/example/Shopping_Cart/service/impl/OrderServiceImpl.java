@@ -59,4 +59,14 @@ public class OrderServiceImpl implements OrderService {
 	public List<ProductOrder> getOrdersByUser(Integer userId) {
 		return orderRepository.findByUserId(userId);
 	}
+
+	@Override
+	public ProductOrder updateOrderStatus(Integer orderId, String status) {
+		ProductOrder order = orderRepository.findById(orderId).orElse(null);
+		if (order != null) {
+			order.setStatus(status);
+			return orderRepository.save(order);
+		}
+		return null;
+	}
 }

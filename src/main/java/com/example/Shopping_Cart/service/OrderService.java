@@ -10,4 +10,6 @@ public interface OrderService {
 	void saveOrder(Integer userid, OrderRequest orderRequest);
 
 	List<ProductOrder> getOrdersByUser(Integer userId);
+
+	public ProductOrder updateOrderStatus(Integer orderId, String status);
 }

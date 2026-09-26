@@ -10,7 +10,7 @@
 		<div class="container p-0" style="margin-top: 10px;">
 			<div class="card card-sh p-3">
 
-				<!-- ===== THÊM ĐOẠN HIỂN THỊ THÔNG BÀO NÀY VÀO ĐÂY ===== -->
+				
 				<div class="col-md-12">
 					<th:block th:if="${session.succMsg}">
 						<p class="text-success fw-bold text-center fs-5">[[${session.succMsg}]]</p>
@@ -20,38 +20,38 @@
 						<p class="text-danger fw-bold text-center fs-5">[[${session.errorMsg}]]</p>
 					</th:block>
 				</div>
-				<!-- ================================================= -->
+				
 
 				<div class="card-body p-1">
 					<div class="row">
 
-						<!-- Cột 1: Ảnh sản phẩm động -->
+						
 						<div class="col-md-6 text-end">
 							<img th:alt="${product.title}"
 								th:src="@{'/img/product_img/' + ${product.image}}" width="400px"
 								height="450px" style="object-fit: contain;">
 						</div>
 
-						<!-- Cột 2: Thông tin chi tiết động từ Database -->
+						
 						<div class="col-md-6">
-							<!-- Tên sản phẩm -->
+						
 							<p class="fs-3">[[${product.title}]]</p>
 
-							<!-- Mô tả -->
+							
 							<p class="fw-bold mb-1">Description :</p>
 							<p class="text-secondary">[[${product.description}]]</p>
 
-							<!-- Chi tiết sản phẩm & Trạng thái Status -->
+							
 							<p class="fw-bold mb-1">Product Details:</p>
 							<div class="mb-1">
 								<span class="fw-bold">Status : </span>
 
-								<!-- Báo Available khi Active VÀ Stock > 0 -->
+								
 								<th:block th:if="${product.isActive and product.stock > 0}">
 									<span class="badge bg-success">Available</span>
 								</th:block>
 
-								<!-- Báo out of stock (nền vàng) khi Inactive HOẶC Stock <= 0 -->
+								
 								<th:block th:unless="${product.isActive and product.stock > 0}">
 									<span class="badge bg-warning text-white">out of stock</span>
 								</th:block>
@@ -65,7 +65,7 @@
 								Return
 							</p>
 
-							<!-- Giá tiền $ động (Giá sau giảm, giá gốc, % giảm) -->
+							
 							<p class="fs-5 mb-4">
 								<span class="fw-bold">Price : </span> <span
 									class="fs-4 fw-bold ms-2">$[[${product.discountPrice}]]</span>
@@ -74,7 +74,7 @@
 									off</span>
 							</p>
 
-							<!-- Các icon chính sách -->
+						
 							<div class="row text-center mb-4">
 								<div class="col-md-4 text-success">
 									<i class="fa-solid fa-money-bill-wave fa-2x"></i>
@@ -92,14 +92,14 @@
 								</div>
 							</div>
 
-							<!-- Nút Add To Cart -->
+							
 							<th:block th:if="${product.isActive and product.stock > 0}">
-								<!-- Nếu đã đăng nhập, gọi vào /add-cart kèm pid và uid -->
+								
 								<a th:if="${user != null}"
 									th:href="@{'/add-cart?pid=' + ${product.id} + '&uid=' + ${user.id}}"
 									class="btn btn-danger col-md-12 py-2 fs-5">Add To Cart</a>
 
-								<!-- Nếu chưa đăng nhập, chuyển hướng sang trang đăng nhập -->
+								
 								<a th:unless="${user != null}" href="/signin"
 									class="btn btn-danger col-md-12 py-2 fs-5">Add To Cart</a>
 							</th:block>
