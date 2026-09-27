@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	th:replace="~{base::layout(~{::section})}">
+<head>
+<meta charset="UTF-8">
+<title>Admin: All Orders</title>
+</head>
+<body>
+	<section>
+		<div class="container-fluid mt-4 p-4">
+
+			
+			<div class="card shadow-sm border-0">
+				<div class="card-header bg-white py-3">
+					<div class="row align-items-center">
+						<!-- Nút Back -->
+						<div class="col-md-3">
+							<a href="/admin/" class="text-decoration-none fw-semibold"> <i
+								class="fa-solid fa-arrow-left me-1"></i> Back to Dashboard
+							</a>
+						</div>
+						<!-- Tiêu đề -->
+						<div class="col-md-6 text-center">
+							<h3 class="fw-bold text-primary mb-0">All Orders Management</h3>
+						</div>
+						<!-- Ô tìm kiếm đẩy sang góc phải -->
+						<div class="col-md-3">
+							<form action="/admin/search-order" method="get"
+								class="d-flex gap-1 justify-content-end">
+								<input type="text" class="form-control form-control-sm"
+									name="orderId" placeholder="Enter order id...">
+								<button class="btn btn-primary btn-sm px-3">
+									<i class="fa-solid fa-search"></i>
+								</button>
+							</form>
+						</div>
+					</div>
+				</div>
+
+				<div class="card-body">
+					<!-- Thông báo thành công -->
+					<div th:if="${session.succMsg}"
+						class="alert alert-success text-center" role="alert">
+						<span th:text="${session.succMsg}"></span>
+						<th:block th:text="${@commonUtil.removeSessionMessage()}"></th:block>
+					</div>
+					<!-- Thông báo lỗi -->
+					<div th:if="${session.errorMsg}"
+						class="alert alert-danger text-center" role="alert">
+						<span th:text="${session.errorMsg}"></span>
+						<th:block th:text="${@commonUtil.removeSessionMessage()}"></th:block>
+					</div>
+
+					<!-- Bảng danh sách đơn hàng -->
+					<div class="table-responsive">
+						<table
+							class="table table-bordered table-hover align-middle bg-white">
+							<thead class="table-light text-center">
+								<tr>
+									<th>Order Id</th>
+									<th>Customer Details</th>
+									<th>Date</th>
+									<th>Product</th>
+									<th>Price & Qty</th>
+									<th>Status</th>
+									<th>Action</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr th:each="o : ${orders}" class="text-center">
+									<td class="fw-semibold text-secondary" th:text="${o.orderId}"></td>
+									<td class="text-start"><span class="fw-bold text-dark"
+										th:text="${o.firstName + ' ' + o.lastName}"></span><br> <small
+										class="text-muted"><i
+											class="fa-solid fa-envelope me-1"></i><span
+											th:text="${o.email}"></span></small><br> <small
+										class="text-muted"><i class="fa-solid fa-phone me-1"></i><span
+											th:text="${o.mobileNo}"></span></small></td>
+									<td th:text="${o.orderDate}"></td>
+									<td class="fw-semibold" th:text="${o.product.title}"></td>
+									<td>Price: $<span th:text="${o.price}"></span><br>
+										Qty: <span th:text="${o.quantity}"></span>
+									</td>
+									<td><span class="badge px-3 py-2"
+										th:classappend="${o.status == 'Cancelled' ? 'bg-danger' : (o.status == 'Delivered' ? 'bg-success' : 'bg-warning text-dark')}"
+										th:text="${o.status}"></span></td>
+									<td>
+										
+										<form action="/admin/update-order-status" method="post"
+											class="d-flex gap-1 justify-content-center align-items-center">
+											<input type="hidden" name="id" th:value="${o.id}"> <select
+												name="st" class="form-select form-select-sm"
+												style="width: 120px;">
+												<option value="0">Pending</option>
+												<option value="1">In Progress</option>
+												<option value="2">Delivered</option>
+												<option value="3">Cancelled</option>
+											</select>
+											<button class="btn btn-primary btn-sm">Update</button>
+										</form>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+
+		</div>
+	</section>
+</body>
+</html>

@@ -23,8 +23,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.example.Shopping_Cart.model.Category;
 import com.example.Shopping_Cart.model.Product;
+import com.example.Shopping_Cart.model.ProductOrder;
 import com.example.Shopping_Cart.model.UserDtls;
 import com.example.Shopping_Cart.service.CategoryService;
+import com.example.Shopping_Cart.service.OrderService;
 import com.example.Shopping_Cart.service.ProductService;
 import com.example.Shopping_Cart.service.UserService;
 
@@ -42,6 +44,9 @@ public class AdminController {
 
 	@Autowired
 	private UserService userService;
+
+	@Autowired
+	private OrderService orderService;
 
 	@GetMapping("/")
 	public String index() {
@@ -234,5 +239,28 @@ public class AdminController {
 			session.setAttribute("errorMsg", "Something went wrong on server");
 		}
 		return "redirect:/admin/users";
+	}
+
+	@GetMapping("/orders")
+	public String getAllOrders(Model m) {
+		List<ProductOrder> orders = orderService.getAllOrders();
+		m.addAttribute("orders", orders);
+		return "admin/orders";
+	}
+
+	@PostMapping("/update-order-status")
+	public String updateOrderStatus(@RequestParam Integer id, @RequestParam Integer st, HttpSession session) {
+		String[] statuses = { "Pending", "In Progress", "Delivered", "Cancelled" };
+		String status = statuses[st];
+
+		ProductOrder updateOrder = orderService.updateOrderStatus(id, status);
+
+		if (updateOrder != null) {
+			session.setAttribute("succMsg", "Status Updated");
+		} else {
+			session.setAttribute("errorMsg", "Status not updated");
+		}
+
+		return "redirect:/admin/orders";
 	}
 }

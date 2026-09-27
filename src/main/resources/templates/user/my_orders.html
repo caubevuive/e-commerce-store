@@ -15,11 +15,13 @@
 					
 					<div th:if="${session.succMsg}" class="alert alert-success text-center" role="alert">
 						<span th:text="${session.succMsg}"></span>
+						<th:block th:text="${@commonUtil.removeSessionMessage()}"></th:block>
 					</div>
 
-				
+					
 					<div th:if="${session.errorMsg}" class="alert alert-danger text-center" role="alert">
 						<span th:text="${session.errorMsg}"></span>
+						<th:block th:text="${@commonUtil.removeSessionMessage()}"></th:block>
 					</div>
 
 					<table class="table table-bordered mt-3 shadow-sm bg-white">

@@ -7,10 +7,20 @@
 </head>
 <body>
 	<section>
-		<div class="container-fluid p-5 mt-5">
-			<div class="card card-sh">
-				<div class="card-header text-center fs-4">
-					<p class="fs-4 fw-bold">View Products</p>
+		<div class="container-fluid p-4 mt-3">
+			
+			<!-- Nút Back quay lại trang Admin Dashboard -->
+			<div class="row mb-3">
+				<div class="col-md-12">
+					<a href="/admin/" class="text-decoration-none fw-semibold">
+						<i class="fa-solid fa-arrow-left me-1"></i> Back to Dashboard
+					</a>
+				</div>
+			</div>
+
+			<div class="card shadow-sm border-0">
+				<div class="card-header bg-white text-center py-3">
+					<p class="fs-4 fw-bold mb-2">View Products</p>
 
 					<th:block th:if="${session.succMsg}">
 						<p class="text-success fw-bold">[[${session.succMsg}]]</p>
@@ -23,43 +33,50 @@
 					</th:block>
 				</div>
 				<div class="card-body">
-					<table class="table">
-						<thead>
-							<tr>
-								<th scope="col">Sl No</th>
-								<th scope="col">Image</th>
-								<th scope="col">Title</th>
-								<th scope="col">Category</th>
-								<th scope="col">Price</th>
-								<th scope="col">Discount</th>
-								<th scope="col">Discount Price</th>
-								<th scope="col">Status</th>
-								<th scope="col">Stock</th>
-								<th scope="col">Action</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr th:each="p,c:${products}">
-								<th scope="row">[[${c.count}]]</th>
-								<td><img th:src="@{'/img/product_img/'+${p.image}}"
-									width="70px" height="70px"></td>
-								<td>[[${p.title}]]</td>
-								<td>[[${p.category}]]</td>
-								<td>[[${p.price}]]</td>
-								<td>[[${p.discount}]]</td>
-								<td>[[${p.discountPrice}]]</td>
-								<td>[[${p.isActive}]]</td>
-								<td>[[${p.stock}]]</td>
-								<td><a th:href="@{'/admin/editProduct/' + ${p.id}}"
-									class="btn btn-primary btn-sm"> <i
-										class="fa-solid fa-pen-to-square"></i> Edit
-								</a> <a th:href="@{'/admin/deleteProduct/' + ${p.id}}"
-									class="btn btn-danger btn-sm"> <i class="fa-solid fa-trash"></i>
-										Delete
-								</a></td>
-							</tr>
-						</tbody>
-					</table>
+					<div class="table-responsive">
+						<table class="table table-hover align-middle">
+							<thead class="table-light text-center">
+								<tr>
+									<th scope="col">Sl No</th>
+									<th scope="col">Image</th>
+									<th scope="col">Title</th>
+									<th scope="col">Category</th>
+									<th scope="col">Price</th>
+									<th scope="col">Discount</th>
+									<th scope="col">Discount Price</th>
+									<th scope="col">Status</th>
+									<th scope="col">Stock</th>
+									<th scope="col">Action</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr th:each="p,c:${products}" class="text-center">
+									<th scope="row" th:text="${c.count}"></th>
+									<td>
+										<img th:src="@{'/img/product_img/'+${p.image}}"
+											width="60px" height="60px" class="rounded object-fit-cover shadow-sm">
+									</td>
+									<td class="fw-semibold text-dark text-start" th:text="${p.title}"></td>
+									<td th:text="${p.category}"></td>
+									<td th:text="${p.price}"></td>
+									<td th:text="${p.discount}"></td>
+									<td th:text="${p.discountPrice}"></td>
+									<td th:text="${p.isActive}"></td>
+									<td th:text="${p.stock}"></td>
+									<td>
+										<a th:href="@{'/admin/editProduct/' + ${p.id}}"
+											class="btn btn-primary btn-sm"> 
+											<i class="fa-solid fa-pen-to-square me-1"></i> Edit
+										</a> 
+										<a th:href="@{'/admin/deleteProduct/' + ${p.id}}"
+											class="btn btn-danger btn-sm"> 
+											<i class="fa-solid fa-trash me-1"></i> Delete
+										</a>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
 				</div>
 			</div>
 		</div>

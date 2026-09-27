@@ -7,22 +7,30 @@
 </head>
 <body>
 	<section>
-		<div class="container-fluid p-5 mt-5">
+		<div class="container-fluid p-4 mt-4">
+			
+			
+			<div class="row mb-3">
+				<div class="col-md-12">
+					<a href="/admin/" class="text-decoration-none fw-semibold">
+						<i class="fa-solid fa-arrow-left me-1"></i> Back to Dashboard
+					</a>
+				</div>
+			</div>
+
 			<div class="row">
 
 				<!-- Form Add Category -->
 				<div class="col-md-3">
-					<div class="card card-sh">
-						<div class="card-header text-center fs-4">Add Category</div>
+					<div class="card shadow-sm border-0">
+						<div class="card-header bg-white text-center fs-4 fw-bold py-3">Add Category</div>
 						<div class="card-body">
 
-							
 							<th:block th:if="${session.succMsg}">
 								<p class="text-success fw-bold text-center">[[${session.succMsg}]]</p>
 								<th:block th:text="${@commonServiceImpl.removeSessionMessage()}"></th:block>
 							</th:block>
 
-						
 							<th:block th:if="${session.errorMsg}">
 								<p class="text-danger fw-bold text-center">[[${session.errorMsg}]]</p>
 								<th:block th:text="${@commonServiceImpl.removeSessionMessage()}"></th:block>
@@ -63,13 +71,13 @@
 					</div>
 				</div>
 
-				
+				<!-- Category Details Table -->
 				<div class="col-md-9">
-					<div class="card card-sh">
-						<div class="card-header text-center fs-4">Category Details</div>
+					<div class="card shadow-sm border-0">
+						<div class="card-header bg-white text-center fs-4 fw-bold py-3">Category Details</div>
 						<div class="card-body">
-							<table class="table table-hover">
-								<thead>
+							<table class="table table-hover align-middle">
+								<thead class="table-light text-center">
 									<tr>
 										<th scope="col">Sl No</th>
 										<th scope="col">Category</th>
@@ -79,21 +87,19 @@
 									</tr>
 								</thead>
 								<tbody>
-									<tr th:each="cat, ch : ${categorys}">
-										<th scope="row">[[${ch.count}]]</th>
-										<td>[[${cat.name}]]</td>
-										<td>[[${cat.isActive}]]</td>
-										<td><img
-											th:src="@{'/img/category_img/' + ${cat.imageName}}"
-											width="50px" height="50px"></td>
+									<tr th:each="cat, ch : ${categorys}" class="text-center">
+										<th scope="row" th:text="${ch.count}"></th>
+										<td class="fw-semibold text-dark" th:text="${cat.name}"></td>
+										<td th:text="${cat.isActive}"></td>
 										<td>
-										
+											<img th:src="@{'/img/category_img/' + ${cat.imageName}}"
+												width="50px" height="50px" class="rounded object-fit-cover shadow-sm">
+										</td>
+										<td>
 											<a th:href="@{'/admin/editCategory/' + ${cat.id}}"
 												class="btn btn-sm btn-primary">
 												<i class="fa-solid fa-pen-to-square me-1"></i> Edit
 											</a> 
-											
-											
 											<a th:href="@{'/admin/deleteCategory/' + ${cat.id}}"
 												class="btn btn-sm btn-danger">
 												<i class="fa-solid fa-trash me-1"></i> Delete

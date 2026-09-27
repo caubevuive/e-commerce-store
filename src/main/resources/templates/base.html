@@ -42,7 +42,6 @@
 					<li class="nav-item"><a class="nav-link active"
 						aria-current="page" href="/products">Product</a></li>
 
-
 					<li class="nav-item dropdown"><a
 						class="nav-link dropdown-toggle active" href="#" role="button"
 						data-bs-toggle="dropdown" aria-expanded="false"> Category </a>
@@ -56,6 +55,7 @@
 				<!-- Right Side Navigation Menu -->
 				<ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center">
 
+					<!-- Khi chưa đăng nhập -->
 					<th:block th:if="${user == null}">
 						<li class="nav-item"><a class="nav-link active"
 							href="/signin"> <i class="fa-solid fa-right-to-bracket"></i>
@@ -65,10 +65,10 @@
 							href="/register">REGISTER</a></li>
 					</th:block>
 
-
+					<!-- Khi đã đăng nhập -->
 					<th:block th:if="${user != null}">
 
-						
+						<!-- Cart (Chỉ hiển thị với USER) -->
 						<li class="nav-item me-3"
 							th:if="${user.role == 'ROLE_USER' or user.role == 'USER'}">
 							<a class="nav-link active position-relative"
@@ -79,7 +79,7 @@
 						</a>
 						</li>
 
-						
+						<!-- My Orders (Chỉ hiển thị với USER) -->
 						<li class="nav-item me-3"
 							th:if="${user.role == 'ROLE_USER' or user.role == 'USER'}">
 							<a class="nav-link active" th:href="@{/user/my-orders}"> <i
@@ -87,24 +87,30 @@
 						</a>
 						</li>
 
-
+						<!-- User Dropdown Menu -->
 						<li class="nav-item dropdown"><a
 							class="nav-link dropdown-toggle active" href="#" role="button"
 							data-bs-toggle="dropdown" aria-expanded="false"> <i
 								class="fa-solid fa-user me-1"></i>[[${user.name}]]
 						</a>
 							<ul class="dropdown-menu dropdown-menu-end">
-								
+
+								<!-- Menu dành cho ADMIN -->
 								<li th:if="${user.role == 'ROLE_ADMIN' or user.role == 'ADMIN'}">
 									<a class="dropdown-item" href="/admin/"><i
 										class="fa-solid fa-user-gear me-2"></i>Admin Dashboard</a>
 								</li>
+								<li th:if="${user.role == 'ROLE_ADMIN' or user.role == 'ADMIN'}">
+									<a class="dropdown-item" href="/admin/orders"><i
+										class="fa-solid fa-box-open me-2"></i>Manage Orders</a>
+								</li>
 
-								
+								<!-- Menu dành cho USER -->
 								<li th:if="${user.role == 'ROLE_USER' or user.role == 'USER'}">
 									<a class="dropdown-item" href="/user/"><i
 										class="fa-solid fa-id-card me-2"></i>My Profile</a>
 								</li>
+
 								<li><hr class="dropdown-divider"></li>
 								<li><a class="dropdown-item text-danger" href="/logout"><i
 										class="fa-solid fa-right-from-bracket me-2"></i>Logout</a></li>
