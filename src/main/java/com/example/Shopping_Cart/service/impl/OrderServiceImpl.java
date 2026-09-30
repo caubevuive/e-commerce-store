@@ -8,11 +8,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.Shopping_Cart.model.Cart;
+import com.example.Shopping_Cart.model.OrderAddress;
 import com.example.Shopping_Cart.model.OrderRequest;
 import com.example.Shopping_Cart.model.ProductOrder;
 import com.example.Shopping_Cart.repository.CartRepository;
 import com.example.Shopping_Cart.repository.ProductOrderRepository;
 import com.example.Shopping_Cart.service.OrderService;
+import com.example.Shopping_Cart.util.CommonUtil;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -22,6 +24,9 @@ public class OrderServiceImpl implements OrderService {
 
 	@Autowired
 	private CartRepository cartRepository;
+
+	@Autowired
+	private CommonUtil commonUtil;
 
 	@Override
 	public void saveOrder(Integer userid, OrderRequest orderRequest) {
@@ -33,25 +38,37 @@ public class OrderServiceImpl implements OrderService {
 			order.setOrderId(UUID.randomUUID().toString());
 			order.setOrderDate(new Date());
 
-			order.setFirstName(orderRequest.getFirstName());
-			order.setLastName(orderRequest.getLastName());
-			order.setEmail(orderRequest.getEmail());
-			order.setMobileNo(orderRequest.getMobileNo());
-			order.setAddress(orderRequest.getAddress());
-			order.setCity(orderRequest.getCity());
-			order.setState(orderRequest.getState());
-			order.setPincode(orderRequest.getPincode());
-			order.setPaymentType(orderRequest.getPaymentType());
+			OrderAddress address = new OrderAddress();
+			address.setFirstName(orderRequest.getFirstName());
+			address.setLastName(orderRequest.getLastName());
+			address.setEmail(orderRequest.getEmail());
+			address.setMobileNo(orderRequest.getMobileNo());
+			address.setAddress(orderRequest.getAddress());
+			address.setCity(orderRequest.getCity());
+			address.setState(orderRequest.getState());
+			address.setPincode(orderRequest.getPincode());
 
+			order.setOrderAddress(address);
+
+			order.setPaymentType(orderRequest.getPaymentType());
 			order.setStatus("In Progress");
 			order.setProduct(cart.getProduct());
 			order.setPrice(cart.getProduct().getDiscountPrice());
 			order.setQuantity(cart.getQuantity());
 			order.setUser(cart.getUser());
 
-			orderRepository.save(order);
+			// Lưu đơn hàng vào database
+			ProductOrder saveOrder = orderRepository.save(order);
+
+			// Tự động gửi email xác nhận ngay khi khách đặt hàng thành công
+			try {
+				commonUtil.sendMailForProductOrder(saveOrder, "Order Placed Successfully");
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 
+		// Xóa giỏ hàng sau khi đặt thành công
 		cartRepository.deleteAll(carts);
 	}
 
@@ -65,7 +82,16 @@ public class OrderServiceImpl implements OrderService {
 		ProductOrder order = orderRepository.findById(orderId).orElse(null);
 		if (order != null) {
 			order.setStatus(status);
-			return orderRepository.save(order);
+			ProductOrder updateOrder = orderRepository.save(order);
+
+			// Gửi mail thông báo khi Admin cập nhật trạng thái đơn hàng
+			try {
+				commonUtil.sendMailForProductOrder(updateOrder, status);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+			return updateOrder;
 		}
 		return null;
 	}

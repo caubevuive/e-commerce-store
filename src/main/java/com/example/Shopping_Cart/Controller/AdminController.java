@@ -29,12 +29,15 @@ import com.example.Shopping_Cart.service.CategoryService;
 import com.example.Shopping_Cart.service.OrderService;
 import com.example.Shopping_Cart.service.ProductService;
 import com.example.Shopping_Cart.service.UserService;
+import com.example.Shopping_Cart.util.CommonUtil;
 
 import jakarta.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
+	@Autowired
+	private CommonUtil commonUtil;
 
 	@Autowired
 	private CategoryService categoryService;
@@ -256,7 +259,14 @@ public class AdminController {
 		ProductOrder updateOrder = orderService.updateOrderStatus(id, status);
 
 		if (updateOrder != null) {
-			session.setAttribute("succMsg", "Status Updated");
+			try {
+
+				commonUtil.sendMailForProductOrder(updateOrder, status);
+				session.setAttribute("succMsg", "Status Updated & Email Sent Successfully");
+			} catch (Exception e) {
+				e.printStackTrace();
+				session.setAttribute("errorMsg", "Status Updated, but Failed to Send Email");
+			}
 		} else {
 			session.setAttribute("errorMsg", "Status not updated");
 		}

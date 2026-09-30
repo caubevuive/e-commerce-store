@@ -9,7 +9,6 @@
 	<section>
 		<div class="container-fluid mt-4 p-4">
 
-			
 			<div class="card shadow-sm border-0">
 				<div class="card-header bg-white py-3">
 					<div class="row align-items-center">
@@ -69,13 +68,18 @@
 							<tbody>
 								<tr th:each="o : ${orders}" class="text-center">
 									<td class="fw-semibold text-secondary" th:text="${o.orderId}"></td>
-									<td class="text-start"><span class="fw-bold text-dark"
-										th:text="${o.firstName + ' ' + o.lastName}"></span><br> <small
-										class="text-muted"><i
+									<td class="text-start">
+										<!-- Nếu có orderAddress thì lấy từ bảng mới, ngược lại lấy từ cột cũ của product_order -->
+										<span class="fw-bold text-dark"
+										th:text="${o.orderAddress != null ? (o.orderAddress.firstName + ' ' + o.orderAddress.lastName) : (o.firstName + ' ' + o.lastName)}"></span><br>
+										
+										<small class="text-muted"><i
 											class="fa-solid fa-envelope me-1"></i><span
-											th:text="${o.email}"></span></small><br> <small
-										class="text-muted"><i class="fa-solid fa-phone me-1"></i><span
-											th:text="${o.mobileNo}"></span></small></td>
+											th:text="${o.orderAddress != null ? o.orderAddress.email : o.email}"></span></small><br> 
+										
+										<small class="text-muted"><i class="fa-solid fa-phone me-1"></i><span
+											th:text="${o.orderAddress != null ? o.orderAddress.mobileNo : o.mobileNo}"></span></small>
+									</td>
 									<td th:text="${o.orderDate}"></td>
 									<td class="fw-semibold" th:text="${o.product.title}"></td>
 									<td>Price: $<span th:text="${o.price}"></span><br>
@@ -85,7 +89,6 @@
 										th:classappend="${o.status == 'Cancelled' ? 'bg-danger' : (o.status == 'Delivered' ? 'bg-success' : 'bg-warning text-dark')}"
 										th:text="${o.status}"></span></td>
 									<td>
-										
 										<form action="/admin/update-order-status" method="post"
 											class="d-flex gap-1 justify-content-center align-items-center">
 											<input type="hidden" name="id" th:value="${o.id}"> <select

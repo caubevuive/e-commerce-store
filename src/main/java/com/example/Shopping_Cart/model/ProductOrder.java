@@ -2,11 +2,13 @@ package com.example.Shopping_Cart.model;
 
 import java.util.Date;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 
 @Entity
 public class ProductOrder {
@@ -35,7 +37,8 @@ public class ProductOrder {
 	@ManyToOne
 	private UserDtls user;
 
-	// --- GETTERS AND SETTERS ---
+	@OneToOne(cascade = CascadeType.ALL)
+	private OrderAddress orderAddress;
 
 	public Integer getId() {
 		return id;
@@ -171,5 +174,13 @@ public class ProductOrder {
 
 	public void setUser(UserDtls user) {
 		this.user = user;
+	}
+
+	public OrderAddress getOrderAddress() {
+		return orderAddress;
+	}
+
+	public void setOrderAddress(OrderAddress orderAddress) {
+		this.orderAddress = orderAddress;
 	}
 }
