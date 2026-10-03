@@ -31,4 +31,6 @@ public interface UserService {
 	public UserDtls getUserByToken(String token);
 
 	public void updateUserPassword(UserDtls user, String newPassword);
+
+	public UserDtls updateUserProfile(UserDtls user, MultipartFile file);
 }

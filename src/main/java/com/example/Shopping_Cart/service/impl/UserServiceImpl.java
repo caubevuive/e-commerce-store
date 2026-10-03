@@ -170,4 +170,36 @@ public class UserServiceImpl implements UserService {
 		user.setResetToken(null);
 		userRepository.save(user);
 	}
+
+	@Override
+	public UserDtls updateUserProfile(UserDtls user, MultipartFile file) {
+		UserDtls dbUser = userRepository.findById(user.getId()).orElse(null);
+
+		if (dbUser != null) {
+			dbUser.setName(user.getName());
+			dbUser.setMobileNumber(user.getMobileNumber());
+			dbUser.setAddress(user.getAddress());
+			dbUser.setCity(user.getCity());
+			dbUser.setState(user.getState());
+			dbUser.setPincode(user.getPincode());
+
+			if (file != null && !file.isEmpty()) {
+				try {
+					File saveFile = new ClassPathResource("static/img").getFile();
+
+					Path path = Paths.get(saveFile.getAbsolutePath() + File.separator + "profile_img" + File.separator
+							+ file.getOriginalFilename());
+
+					Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+
+					dbUser.setProfileImage(file.getOriginalFilename());
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+
+			return userRepository.save(dbUser);
+		}
+		return null;
+	}
 }

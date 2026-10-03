@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.Shopping_Cart.model.Cart;
 import com.example.Shopping_Cart.model.OrderRequest;
@@ -116,5 +117,24 @@ public class UserController {
 			session.setAttribute("errorMsg", "Something went wrong");
 		}
 		return "redirect:/user/my-orders";
+	}
+
+	@GetMapping("/profile")
+	public String profile(Principal p, Model m) {
+		UserDtls user = userService.getUserByEmail(p.getName());
+		m.addAttribute("user", user);
+		return "user/profile"; // Trỏ đến file templates/user/profile.html
+	}
+
+	@PostMapping("/update-profile")
+	public String updateProfile(@ModelAttribute UserDtls user, @RequestParam("img") MultipartFile img,
+			HttpSession session) {
+		UserDtls updateUser = userService.updateUserProfile(user, img);
+		if (updateUser != null) {
+			session.setAttribute("succMsg", "Profile Updated Successfully");
+		} else {
+			session.setAttribute("errorMsg", "Something went wrong on server");
+		}
+		return "redirect:/user/profile";
 	}
 }
