@@ -33,4 +33,6 @@ public interface UserService {
 	public void updateUserPassword(UserDtls user, String newPassword);
 
 	public UserDtls updateUserProfile(UserDtls user, MultipartFile file);
+
+	public boolean changePassword(UserDtls user, String oldPassword, String newPassword);
 }

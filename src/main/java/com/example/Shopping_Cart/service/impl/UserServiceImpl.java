@@ -120,7 +120,7 @@ public class UserServiceImpl implements UserService {
 		} else if (currentDuration == 1) {
 			nextDuration = 3;
 		} else {
-			nextDuration = currentDuration + 2; // Tăng thêm 2 phút mỗi lần vi phạm tiếp theo
+			nextDuration = currentDuration + 2;
 		}
 
 		userRepository.accountLock(false, new Date(), MAX_FAILED_ATTEMPTS, nextDuration, user.getEmail());
@@ -133,7 +133,7 @@ public class UserServiceImpl implements UserService {
 		}
 
 		int duration = user.getLockDuration() != null ? user.getLockDuration() : 1;
-		long lockTimeDurationInMillis = duration * 60 * 1000L; // Chuyển số phút phạt ra milisecond
+		long lockTimeDurationInMillis = duration * 60 * 1000L;
 
 		long lockTimeInMillis = user.getLockTime().getTime();
 		long currentTimeInMillis = System.currentTimeMillis();
@@ -201,5 +201,17 @@ public class UserServiceImpl implements UserService {
 			return userRepository.save(dbUser);
 		}
 		return null;
+	}
+
+	@Override
+	public boolean changePassword(UserDtls user, String oldPassword, String newPassword) {
+
+		if (passwordEncoder.matches(oldPassword, user.getPassword())) {
+
+			user.setPassword(passwordEncoder.encode(newPassword));
+			userRepository.save(user);
+			return true;
+		}
+		return false;
 	}
 }

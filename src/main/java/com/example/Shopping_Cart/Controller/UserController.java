@@ -123,7 +123,7 @@ public class UserController {
 	public String profile(Principal p, Model m) {
 		UserDtls user = userService.getUserByEmail(p.getName());
 		m.addAttribute("user", user);
-		return "user/profile"; // Trỏ đến file templates/user/profile.html
+		return "user/profile";
 	}
 
 	@PostMapping("/update-profile")
@@ -136,5 +136,26 @@ public class UserController {
 			session.setAttribute("errorMsg", "Something went wrong on server");
 		}
 		return "redirect:/user/profile";
+	}
+
+	@GetMapping("/change-password")
+	public String loadChangePassword() {
+		return "user/change_password";
+	}
+
+	@PostMapping("/change-password")
+	public String changePassword(@RequestParam String oldPassword, @RequestParam String newPassword, Principal p,
+			HttpSession session) {
+		UserDtls user = userService.getUserByEmail(p.getName());
+
+		boolean matchPassword = userService.changePassword(user, oldPassword, newPassword);
+
+		if (matchPassword) {
+			session.setAttribute("succMsg", "Password Changed Successfully");
+		} else {
+			session.setAttribute("errorMsg", "Current Password Incorrect");
+		}
+
+		return "redirect:/user/change-password";
 	}
 }
