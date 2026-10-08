@@ -116,4 +116,10 @@ public class ProductServiceImpl implements ProductService {
 
 		return products.stream().filter(p -> p.getIsDelete() == null || !p.getIsDelete()).toList();
 	}
+
+	@Override
+	public List<Product> searchProduct(String ch) {
+		return productRepository.findByTitleContainingIgnoreCase(ch).stream()
+				.filter(p -> p.getIsDelete() == null || !p.getIsDelete()).toList();
+	}
 }

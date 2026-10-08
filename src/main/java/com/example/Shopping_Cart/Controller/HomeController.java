@@ -79,10 +79,26 @@ public class HomeController {
 	}
 
 	@GetMapping("/products")
-	public String products(Model m, @RequestParam(value = "category", defaultValue = "") String category) {
-		List<Product> products = productService.getAllActiveProducts(category);
+	public String products(Model m, @RequestParam(value = "category", defaultValue = "") String category,
+			@RequestParam(value = "ch", defaultValue = "") String ch) {
+
+		List<Product> products = null;
+
+		if (ch != null && !ch.trim().isEmpty()) {
+			products = productService.searchProduct(ch);
+		}
+
+		else if (category != null && !category.trim().isEmpty()) {
+			products = productService.getAllActiveProducts(category);
+		}
+
+		else {
+			products = productService.getAllActiveProducts("");
+		}
+
 		m.addAttribute("products", products);
-		m.addAttribute("paramValue", category);
+		m.addAttribute("paramValue", ch);
+
 		return "product";
 	}
 

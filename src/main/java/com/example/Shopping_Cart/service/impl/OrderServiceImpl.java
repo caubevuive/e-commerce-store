@@ -84,7 +84,6 @@ public class OrderServiceImpl implements OrderService {
 			order.setStatus(status);
 			ProductOrder updateOrder = orderRepository.save(order);
 
-			// Gửi mail thông báo khi Admin cập nhật trạng thái đơn hàng
 			try {
 				commonUtil.sendMailForProductOrder(updateOrder, status);
 			} catch (Exception e) {
@@ -99,5 +98,10 @@ public class OrderServiceImpl implements OrderService {
 	@Override
 	public List<ProductOrder> getAllOrders() {
 		return orderRepository.findAll();
+	}
+
+	@Override
+	public ProductOrder getOrderByOrderId(String orderId) {
+		return orderRepository.findByOrderId(orderId);
 	}
 }

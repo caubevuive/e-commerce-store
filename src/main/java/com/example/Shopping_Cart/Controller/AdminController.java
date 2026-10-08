@@ -273,4 +273,21 @@ public class AdminController {
 
 		return "redirect:/admin/orders";
 	}
+
+	@GetMapping("/search-order")
+	public String searchOrder(@RequestParam String orderId, Model m, HttpSession session) {
+
+		ProductOrder order = orderService.getOrderByOrderId(orderId.trim());
+
+		if (order == null) {
+			session.setAttribute("errorMsg", "Incorrect Order Id");
+			return "redirect:/admin/orders";
+		}
+
+		List<ProductOrder> orders = List.of(order);
+		m.addAttribute("orders", orders);
+		m.addAttribute("paramValue", orderId);
+
+		return "admin/orders";
+	}
 }

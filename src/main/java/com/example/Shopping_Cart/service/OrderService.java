@@ -9,9 +9,11 @@ public interface OrderService {
 
 	void saveOrder(Integer userid, OrderRequest orderRequest);
 
-	List<ProductOrder> getOrdersByUser(Integer userId);
+	public List<ProductOrder> getOrdersByUser(Integer userId);
 
 	public ProductOrder updateOrderStatus(Integer orderId, String status);
 
 	public List<ProductOrder> getAllOrders();
+
+	public ProductOrder getOrderByOrderId(String orderId);
 }
