@@ -40,12 +40,11 @@ public class AuthSuccessHandlerImpl implements AuthenticationSuccessHandler {
 				if (userService.unlockWhenTimeExpired(userDtls)) {
 					userService.resetFailedAttempts(email);
 				} else {
-					// 1. Lưu exception bị khóa vào Session để trang Login hiển thị ra màn hình
+
 					HttpSession session = request.getSession();
 					session.setAttribute(WebAttributes.AUTHENTICATION_EXCEPTION,
 							new LockedException("Tài khoản của bạn đã bị khóa. Vui lòng thử lại sau!"));
 
-					// 2. Chuyển hướng lại trang đăng nhập
 					response.sendRedirect("/signin?error");
 					return;
 				}

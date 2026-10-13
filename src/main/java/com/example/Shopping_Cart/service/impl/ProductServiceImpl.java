@@ -9,6 +9,9 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -121,5 +124,36 @@ public class ProductServiceImpl implements ProductService {
 	public List<Product> searchProduct(String ch) {
 		return productRepository.findByTitleContainingIgnoreCase(ch).stream()
 				.filter(p -> p.getIsDelete() == null || !p.getIsDelete()).toList();
+	}
+
+	@Override
+	public Page<Product> getAllProductsPagination(Integer pageNo, Integer pageSize) {
+		Pageable pageable = PageRequest.of(pageNo, pageSize);
+		return productRepository.findAllNotDeleted(pageable);
+	}
+
+	@Override
+	public Page<Product> searchProductPagination(Integer pageNo, Integer pageSize, String ch) {
+		Pageable pageable = PageRequest.of(pageNo, pageSize);
+		return productRepository.searchNotDeleted(ch.trim(), pageable);
+	}
+
+	@Override
+	public Page<Product> getAllActiveProductPagination(Integer pageNo, Integer pageSize, String category) {
+		Pageable pageable = PageRequest.of(pageNo, pageSize);
+		Page<Product> pageProduct = null;
+
+		if (ObjectUtils.isEmpty(category) || category.equalsIgnoreCase("all")) {
+			pageProduct = productRepository.findByIsActiveTrue(pageable);
+		} else {
+			pageProduct = productRepository.findByCategoryAndIsActiveTrueIgnoreCase(category.trim(), pageable);
+		}
+		return pageProduct;
+	}
+
+	@Override
+	public Page<Product> searchActiveProductPagination(Integer pageNo, Integer pageSize, String ch) {
+		Pageable pageable = PageRequest.of(pageNo, pageSize);
+		return productRepository.findByTitleContainingIgnoreCaseAndIsActiveTrue(ch.trim(), pageable);
 	}
 }

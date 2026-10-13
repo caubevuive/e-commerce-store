@@ -37,11 +37,11 @@
 							<div class="list-group list-group-flush">
 
 								<a href="/products"
-									th:classappend="${paramValue == '' || paramValue == null} ? 'active' : ''"
+									th:classappend="${selectedCategory == '' || selectedCategory == null} ? 'active' : ''"
 									class="list-group-item list-group-item-action">All</a> <a
 									th:each="c:${categorys}"
 									th:href="@{'/products?category=' + ${c.name}}"
-									th:classappend="${paramValue == c.name} ? 'active' : ''"
+									th:classappend="${selectedCategory == c.name} ? 'active' : ''"
 									class="list-group-item list-group-item-action">[[${c.name}]]</a>
 							</div>
 						</div>
@@ -95,6 +95,39 @@
 									<p class="fs-4 text-center text-danger">Product not
 										available</p>
 								</th:block>
+							</div>
+
+							<!-- Thanh phân trang (Pagination UI cho Khách hàng) -->
+							<div class="row mt-4" th:if="${totalPages > 0}">
+								<div class="col-md-4">Total Products: [[${totalElements}]]
+								</div>
+								<div class="col-md-8">
+									<nav aria-label="Page navigation example">
+										<ul class="pagination justify-content-end">
+											<!-- Nút Previous -->
+											<li class="page-item"
+												th:classappend="${isFirst} ? 'disabled':''"><a
+												class="page-link"
+												th:href="@{'/products?pageNo=' + ${pageNo - 1} + '&category=' + ${selectedCategory} + '&ch=' + ${paramValue}}">Previous</a>
+											</li>
+
+											<!-- Các số trang -->
+											<li class="page-item"
+												th:classappend="${i == pageNo} ? 'active':''"
+												th:each="i:${#numbers.sequence(0, totalPages - 1)}"><a
+												class="page-link"
+												th:href="@{'/products?pageNo=' + ${i} + '&category=' + ${selectedCategory} + '&ch=' + ${paramValue}}">[[${i
+													+ 1}]]</a></li>
+
+											<!-- Nút Next -->
+											<li class="page-item"
+												th:classappend="${isLast} ? 'disabled':''"><a
+												class="page-link"
+												th:href="@{'/products?pageNo=' + ${pageNo + 1} + '&category=' + ${selectedCategory} + '&ch=' + ${paramValue}}">Next</a>
+											</li>
+										</ul>
+									</nav>
+								</div>
 							</div>
 
 						</div>

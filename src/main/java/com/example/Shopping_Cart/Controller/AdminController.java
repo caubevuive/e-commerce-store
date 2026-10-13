@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.ObjectUtils;
@@ -188,8 +189,32 @@ public class AdminController {
 	}
 
 	@GetMapping("/products")
-	public String loadViewProduct(Model model) {
-		model.addAttribute("products", productService.getAllProducts());
+	public String loadViewProduct(Model m, @RequestParam(name = "ch", defaultValue = "") String ch,
+			@RequestParam(name = "pageNo", defaultValue = "0") Integer pageNo,
+			@RequestParam(name = "pageSize", defaultValue = "5") Integer pageSize) {
+
+		Page<Product> page;
+		List<Product> products;
+
+		if (ch != null && !ch.trim().isEmpty()) {
+			page = productService.searchProductPagination(pageNo, pageSize, ch);
+		} else {
+			page = productService.getAllProductsPagination(pageNo, pageSize);
+		}
+
+		products = page.getContent();
+
+		m.addAttribute("products", products);
+		m.addAttribute("productSize", products.size());
+		m.addAttribute("paramValue", ch);
+
+		m.addAttribute("pageNo", page.getNumber());
+		m.addAttribute("pageSize", pageSize);
+		m.addAttribute("totalElements", page.getTotalElements());
+		m.addAttribute("totalPages", page.getTotalPages());
+		m.addAttribute("isFirst", page.isFirst());
+		m.addAttribute("isLast", page.isLast());
+
 		return "admin/products";
 	}
 

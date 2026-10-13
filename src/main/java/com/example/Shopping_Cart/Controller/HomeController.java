@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.ObjectUtils;
@@ -80,24 +81,32 @@ public class HomeController {
 
 	@GetMapping("/products")
 	public String products(Model m, @RequestParam(value = "category", defaultValue = "") String category,
-			@RequestParam(value = "ch", defaultValue = "") String ch) {
+			@RequestParam(name = "pageNo", defaultValue = "0") Integer pageNo,
+			@RequestParam(name = "pageSize", defaultValue = "8") Integer pageSize,
+			@RequestParam(name = "ch", defaultValue = "") String ch) {
 
-		List<Product> products = null;
+		Page<Product> page = null;
 
 		if (ch != null && !ch.trim().isEmpty()) {
-			products = productService.searchProduct(ch);
+			page = productService.searchActiveProductPagination(pageNo, pageSize, ch);
+		} else {
+			page = productService.getAllActiveProductPagination(pageNo, pageSize, category);
 		}
 
-		else if (category != null && !category.trim().isEmpty()) {
-			products = productService.getAllActiveProducts(category);
-		}
-
-		else {
-			products = productService.getAllActiveProducts("");
-		}
+		List<Product> products = page.getContent();
 
 		m.addAttribute("products", products);
+		m.addAttribute("productsSize", products.size());
+		m.addAttribute("categories", categoryService.getAllCategory());
 		m.addAttribute("paramValue", ch);
+		m.addAttribute("selectedCategory", category);
+
+		m.addAttribute("pageNo", page.getNumber());
+		m.addAttribute("pageSize", pageSize);
+		m.addAttribute("totalElements", page.getTotalElements());
+		m.addAttribute("totalPages", page.getTotalPages());
+		m.addAttribute("isFirst", page.isFirst());
+		m.addAttribute("isLast", page.isLast());
 
 		return "product";
 	}

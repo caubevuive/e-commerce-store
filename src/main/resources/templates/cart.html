@@ -34,20 +34,22 @@
 									<img th:src="@{'/img/product_img/' + ${cart.product.image}}" width="70px" height="70px" alt="Product Image">
 								</td>
 								<td th:text="${cart.product.title}">Product Name</td>
-								<td th:text="'$' + ${cart.product.discountPrice}">$0.0</td>
+								<!-- Định dạng giá sản phẩm -->
+								<td th:text="'$' + ${#numbers.formatDecimal(cart.product.discountPrice, 1, 2)}">$0.0</td>
 								<td>
-									
 									<a class="btn btn-sm btn-success" th:href="@{/user/cart/quantityUpdate(sy='de', cid=${cart.id})}">-</a>
 									<span class="mx-2" th:text="${cart.quantity}">1</span>
 									<a class="btn btn-sm btn-success" th:href="@{/user/cart/quantityUpdate(sy='in', cid=${cart.id})}">+</a>
 								</td>
-								<td th:text="'$' + ${cart.totalPrice}">$0.0</td>
+								<!-- Định dạng tổng tiền của sản phẩm đó -->
+								<td th:text="'$' + ${#numbers.formatDecimal(cart.totalPrice, 1, 2)}">$0.0</td>
 							</tr>
 						</tbody>
 					</table>
 					
 					<div class="text-end">
-						<h4 th:text="'Total Price: $' + ${totalOrderPrice}">Total Price: $0.0</h4>
+						<!-- Định dạng tổng tiền toàn đơn hàng -->
+						<h4 th:text="'Total Price: $' + ${#numbers.formatDecimal(totalOrderPrice, 1, 2)}">Total Price: $0.0</h4>
 						<!-- Đã cập nhật đường dẫn sang /user/orders -->
 						<a th:href="@{/user/orders}" class="btn btn-warning">Proceed Checkout</a>
 					</div>
