@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.example.Shopping_Cart.model.Cart;
@@ -57,10 +60,8 @@ public class OrderServiceImpl implements OrderService {
 			order.setQuantity(cart.getQuantity());
 			order.setUser(cart.getUser());
 
-			// Lưu đơn hàng vào database
 			ProductOrder saveOrder = orderRepository.save(order);
 
-			// Tự động gửi email xác nhận ngay khi khách đặt hàng thành công
 			try {
 				commonUtil.sendMailForProductOrder(saveOrder, "Order Placed Successfully");
 			} catch (Exception e) {
@@ -68,7 +69,6 @@ public class OrderServiceImpl implements OrderService {
 			}
 		}
 
-		// Xóa giỏ hàng sau khi đặt thành công
 		cartRepository.deleteAll(carts);
 	}
 
@@ -103,5 +103,11 @@ public class OrderServiceImpl implements OrderService {
 	@Override
 	public ProductOrder getOrderByOrderId(String orderId) {
 		return orderRepository.findByOrderId(orderId);
+	}
+
+	@Override
+	public Page<ProductOrder> getAllOrdersPagination(Integer pageNo, Integer pageSize) {
+		Pageable pageable = PageRequest.of(pageNo, pageSize);
+		return orderRepository.findAll(pageable);
 	}
 }

@@ -35,4 +35,6 @@ public interface UserService {
 	public UserDtls updateUserProfile(UserDtls user, MultipartFile file);
 
 	public boolean changePassword(UserDtls user, String oldPassword, String newPassword);
+
+	public Boolean updateUserRole(Integer userId, String role);
 }

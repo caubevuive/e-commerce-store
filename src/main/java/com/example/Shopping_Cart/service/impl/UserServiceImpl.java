@@ -214,4 +214,15 @@ public class UserServiceImpl implements UserService {
 		}
 		return false;
 	}
+
+	@Override
+	public Boolean updateUserRole(Integer userId, String role) {
+		UserDtls user = userRepository.findById(userId).orElse(null);
+		if (user != null) {
+			user.setRole(role);
+			userRepository.save(user);
+			return true;
+		}
+		return false;
+	}
 }

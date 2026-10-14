@@ -270,9 +270,19 @@ public class AdminController {
 	}
 
 	@GetMapping("/orders")
-	public String getAllOrders(Model m) {
-		List<ProductOrder> orders = orderService.getAllOrders();
-		m.addAttribute("orders", orders);
+	public String getAllOrders(Model m, @RequestParam(name = "pageNo", defaultValue = "0") Integer pageNo,
+			@RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
+
+		Page<ProductOrder> page = orderService.getAllOrdersPagination(pageNo, pageSize);
+
+		m.addAttribute("orders", page.getContent());
+		m.addAttribute("pageNo", page.getNumber());
+		m.addAttribute("pageSize", pageSize);
+		m.addAttribute("totalElements", page.getTotalElements());
+		m.addAttribute("totalPages", page.getTotalPages());
+		m.addAttribute("isFirst", page.isFirst());
+		m.addAttribute("isLast", page.isLast());
+
 		return "admin/orders";
 	}
 
@@ -314,5 +324,16 @@ public class AdminController {
 		m.addAttribute("paramValue", orderId);
 
 		return "admin/orders";
+	}
+
+	@GetMapping("/update-role")
+	public String updateRole(@RequestParam Integer id, @RequestParam String role, HttpSession session) {
+		Boolean f = userService.updateUserRole(id, role);
+		if (f) {
+			session.setAttribute("succMsg", "User role updated successfully");
+		} else {
+			session.setAttribute("errorMsg", "Something went wrong on server");
+		}
+		return "redirect:/admin/users";
 	}
 }

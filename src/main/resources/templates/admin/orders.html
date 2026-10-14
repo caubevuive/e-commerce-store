@@ -27,9 +27,10 @@
 							<form action="/admin/search-order" method="get"
 								class="d-flex gap-1 justify-content-end">
 								<input type="text" class="form-control form-control-sm"
-									name="orderId" placeholder="Enter order id..." th:value="${paramValue}">
+									name="orderId" placeholder="Enter order id..."
+									th:value="${paramValue}">
 								<button class="btn btn-primary btn-sm px-3">
-									<i class="fa-solid search"></i> Search
+									<i class="fa-solid fa-magnifying-glass"></i> Search
 								</button>
 							</form>
 						</div>
@@ -69,15 +70,15 @@
 								<th:block th:if="${orders.size() > 0}">
 									<tr th:each="o : ${orders}" class="text-center">
 										<td class="fw-semibold text-secondary" th:text="${o.orderId}"></td>
-										<td class="text-start">
-											<span class="fw-bold text-dark"
+										<td class="text-start"><span class="fw-bold text-dark"
 											th:text="${o.orderAddress != null ? (o.orderAddress.firstName + ' ' + o.orderAddress.lastName) : (o.firstName + ' ' + o.lastName)}"></span><br>
-											
+
 											<small class="text-muted"><i
 												class="fa-solid fa-envelope me-1"></i><span
-												th:text="${o.orderAddress != null ? o.orderAddress.email : o.email}"></span></small><br> 
-											
-											<small class="text-muted"><i class="fa-solid fa-phone me-1"></i><span
+												th:text="${o.orderAddress != null ? o.orderAddress.email : o.email}"></span></small><br>
+
+											<small class="text-muted"><i
+												class="fa-solid fa-phone me-1"></i><span
 												th:text="${o.orderAddress != null ? o.orderAddress.mobileNo : o.mobileNo}"></span></small>
 										</td>
 										<td th:text="${o.orderDate}"></td>
@@ -106,12 +107,46 @@
 								</th:block>
 								<th:block th:unless="${orders.size() > 0}">
 									<tr>
-										<td colspan="7" class="text-center text-danger fw-bold">No Orders Found</td>
+										<td colspan="7" class="text-center text-danger fw-bold">No
+											Orders Found</td>
 									</tr>
 								</th:block>
 							</tbody>
 						</table>
 					</div>
+
+					<!-- Thanh phân trang cho Admin Orders -->
+					<div class="row mt-4" th:if="${totalPages > 0}">
+						<div class="col-md-4 align-self-center">Total Orders:
+							[[${totalElements}]]</div>
+						<div class="col-md-8">
+							<nav aria-label="Page navigation example">
+								<ul class="pagination justify-content-end mb-0">
+									<!-- Nút Previous -->
+									<li class="page-item"
+										th:classappend="${isFirst} ? 'disabled':''"><a
+										class="page-link"
+										th:href="@{'/admin/orders?pageNo=' + ${pageNo - 1}}">Previous</a>
+									</li>
+
+									<!-- Các số trang -->
+									<li class="page-item"
+										th:classappend="${i == pageNo} ? 'active':''"
+										th:each="i:${#numbers.sequence(0, totalPages - 1)}"><a
+										class="page-link" th:href="@{'/admin/orders?pageNo=' + ${i}}">[[${i
+											+ 1}]]</a></li>
+
+									<!-- Nút Next -->
+									<li class="page-item"
+										th:classappend="${isLast} ? 'disabled':''"><a
+										class="page-link"
+										th:href="@{'/admin/orders?pageNo=' + ${pageNo + 1}}">Next</a>
+									</li>
+								</ul>
+							</nav>
+						</div>
+					</div>
+
 				</div>
 			</div>
 

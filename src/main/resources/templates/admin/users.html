@@ -9,7 +9,7 @@
 	<section>
 		<div class="container-fluid p-4 mt-2">
 			
-			<!-- Nút Back quay lại trang Admin Dashboard -->
+			
 			<div class="row mb-3">
 				<div class="col-md-12">
 					<a href="/admin/" class="text-decoration-none fw-semibold">
@@ -20,7 +20,7 @@
 
 			<div class="card shadow-sm border-0">
 				<div class="card-header bg-white text-center fs-4 fw-bold py-3">
-					User Details
+					User & Admin Management
 				</div>
 				<div class="card-body">
 					
@@ -45,6 +45,7 @@
 									<th>Email</th>
 									<th>Mobile Number</th>
 									<th>Address</th>
+									<th>Role</th> <!-- Thêm cột Role -->
 									<th>Status</th>
 									<th>Action</th>
 								</tr>
@@ -60,6 +61,21 @@
 									<td>[[${u.email}]]</td>
 									<td>[[${u.mobileNumber}]]</td>
 									<td class="text-start">[[${u.address + ', ' + u.city + ', ' + u.state + ' - ' + u.pincode}]]</td>
+									
+									
+									<td>
+										<span class="badge" th:classappend="${u.role == 'ROLE_ADMIN' ? 'bg-primary' : 'bg-secondary'}" th:text="${u.role}"></span>
+										<div class="mt-1">
+											<a th:if="${u.role == 'ROLE_USER'}" 
+											   th:href="@{'/admin/update-role?id=' + ${u.id} + '&role=ROLE_ADMIN'}" 
+											   class="text-decoration-none text-primary fw-bold" style="font-size: 12px;">Make Admin</a>
+											
+											<a th:if="${u.role == 'ROLE_ADMIN'}" 
+											   th:href="@{'/admin/update-role?id=' + ${u.id} + '&role=ROLE_USER'}" 
+											   class="text-decoration-none text-danger fw-bold" style="font-size: 12px;">Remove Admin</a>
+										</div>
+									</td>
+
 									<td>
 										<span th:if="${u.isEnable}" class="badge bg-success">Active</span>
 										<span th:unless="${u.isEnable}" class="badge bg-danger">Inactive</span>
