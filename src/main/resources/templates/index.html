@@ -14,12 +14,10 @@
 					<img th:src="@{/img/ecom1.png}" class="d-block w-100" alt="..."
 						height="350px">
 				</div>
-
 				<div class="carousel-item">
 					<img th:src="@{/img/ecom3.jpg}" class="d-block w-100" alt="..."
 						height="350px">
 				</div>
-
 				<div class="carousel-item">
 					<img th:src="@{/img/ecom2.jpg}" class="d-block w-100" alt="..."
 						height="350px">
@@ -38,142 +36,43 @@
 		</div>
 		<!-- End Slider -->
 
-
-		<!-- Start Category Module -->
+		<!-- Start Category Module (Dùng d-flex wrap và căn giữa để các ô category luôn đều nhau) -->
 		<div class="container my-4">
 			<p class="text-center fs-4 fw-bold mb-4">Category</p>
-			<div class="row g-3 justify-content-center">
-
-				<div class="col-6 col-md-2">
-					<div
-						class="card rounded-circle shadow-sm p-3 bg-body-tertiary h-100">
-						<div
-							class="card-body text-center p-0 d-flex flex-column align-items-center justify-content-center">
-							<img th:src="@{/img/category_img/appli.png}" width="65%"
-								height="100px" style="object-fit: contain;">
-							<p class="mt-2 mb-0 fw-medium">Electronics</p>
+			<div class="row justify-content-center g-3 text-center">
+				<div class="col-6 col-sm-4 col-md-3 col-lg-2" th:each="cat : ${category}">
+					<a th:href="@{'/products?category=' + ${cat.name}}" class="text-decoration-none text-dark">
+						<div class="card rounded-circle shadow-sm p-3 bg-body-tertiary h-100">
+							<div class="card-body text-center p-0 d-flex flex-column align-items-center justify-content-center">
+								<img th:src="@{'/img/category_img/' + ${cat.imageName}}" width="65%"
+									height="100px" style="object-fit: contain;" alt="Category">
+								<p class="mt-2 mb-0 fw-medium" th:text="${cat.name}">Electronics</p>
+							</div>
 						</div>
-					</div>
+					</a>
 				</div>
-
-				<div class="col-6 col-md-2">
-					<div
-						class="card rounded-circle shadow-sm p-3 bg-body-tertiary h-100">
-						<div
-							class="card-body text-center p-0 d-flex flex-column align-items-center justify-content-center">
-							<img th:src="@{/img/category_img/beuty.png}" width="65%"
-								height="100px" style="object-fit: contain;">
-							<p class="mt-2 mb-0 fw-medium">Beauty</p>
-						</div>
-					</div>
-				</div>
-
-				<div class="col-6 col-md-2">
-					<div
-						class="card rounded-circle shadow-sm p-3 bg-body-tertiary h-100">
-						<div
-							class="card-body text-center p-0 d-flex flex-column align-items-center justify-content-center">
-							<img th:src="@{/img/category_img/pant.png}" width="65%"
-								height="100px" style="object-fit: contain;">
-							<p class="mt-2 mb-0 fw-medium">Clothes</p>
-						</div>
-					</div>
-				</div>
-
-				<div class="col-6 col-md-2">
-					<div
-						class="card rounded-circle shadow-sm p-3 bg-body-tertiary h-100">
-						<div
-							class="card-body text-center p-0 d-flex flex-column align-items-center justify-content-center">
-							<img th:src="@{/img/category_img/laptop.jpg}" width="65%"
-								height="100px" style="object-fit: contain;">
-							<p class="mt-2 mb-0 fw-medium">Laptop</p>
-						</div>
-					</div>
-				</div>
-
-				<div class="col-6 col-md-2">
-					<div
-						class="card rounded-circle shadow-sm p-3 bg-body-tertiary h-100">
-						<div
-							class="card-body text-center p-0 d-flex flex-column align-items-center justify-content-center">
-							<img th:src="@{/img/category_img/mobile.png}" width="65%"
-								height="100px" style="object-fit: contain;">
-							<p class="mt-2 mb-0 fw-medium">Mobile</p>
-						</div>
-					</div>
-				</div>
-
-				<div class="col-6 col-md-2">
-					<div
-						class="card rounded-circle shadow-sm p-3 bg-body-tertiary h-100">
-						<div
-							class="card-body text-center p-0 d-flex flex-column align-items-center justify-content-center">
-							<img th:src="@{/img/category_img/groccery.jpg}" width="65%"
-								height="100px" style="object-fit: contain;">
-							<p class="mt-2 mb-0 fw-medium">Grocery</p>
-						</div>
-					</div>
-				</div>
-
 			</div>
 		</div>
 		<!-- End Category Module -->
 
-
-		<!-- Start Latest Product Module -->
+		<!-- Start Latest Product Module (Sử dụng chuẩn lưới Bootstrap 4 cột, tự động dàn đều lấp đầy khung) -->
 		<div class="container my-5">
 			<p class="text-center fs-4 fw-bold mb-4">Latest Product</p>
-			<div class="row g-3">
-
-				<div class="col-6 col-md-3">
-					<div class="card h-100 shadow-sm">
-						<div
-							class="card-body text-center d-flex flex-column justify-content-between p-3">
-							<img alt="" th:src="@{/img/product_img/laptop.jpg}"
-								class="img-fluid mx-auto mb-2"
-								style="height: 140px; object-fit: contain;">
-							<p class="text-center mb-0 fw-semibold">HP Laptop</p>
+			<div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-4">
+				<div class="col" th:each="p : ${products}">
+					<a th:href="@{'/product/' + ${p.id}}" class="text-decoration-none text-dark">
+						<div class="card h-100 shadow-sm border-0 w-100">
+							<div class="card-body text-center d-flex flex-column justify-content-between p-3">
+								<img alt="Product" th:src="@{'/img/product_img/' + ${p.image}}"
+									class="img-fluid mx-auto mb-2"
+									style="height: 140px; object-fit: contain;">
+								<div>
+									<p class="text-center mb-1 fw-semibold" th:text="${p.title}">HP Laptop</p>
+								</div>
+							</div>
 						</div>
-					</div>
+					</a>
 				</div>
-
-				<div class="col-6 col-md-3">
-					<div class="card h-100 shadow-sm">
-						<div
-							class="card-body text-center d-flex flex-column justify-content-between p-3">
-							<img alt="" th:src="@{/img/product_img/laptop.jpg}"
-								class="img-fluid mx-auto mb-2"
-								style="height: 140px; object-fit: contain;">
-							<p class="text-center mb-0 fw-semibold">HP Laptop</p>
-						</div>
-					</div>
-				</div>
-
-				<div class="col-6 col-md-3">
-					<div class="card h-100 shadow-sm">
-						<div
-							class="card-body text-center d-flex flex-column justify-content-between p-3">
-							<img alt="" th:src="@{/img/product_img/laptop.jpg}"
-								class="img-fluid mx-auto mb-2"
-								style="height: 140px; object-fit: contain;">
-							<p class="text-center mb-0 fw-semibold">HP Laptop</p>
-						</div>
-					</div>
-				</div>
-
-				<div class="col-6 col-md-3">
-					<div class="card h-100 shadow-sm">
-						<div
-							class="card-body text-center d-flex flex-column justify-content-between p-3">
-							<img alt="" th:src="@{/img/product_img/laptop.jpg}"
-								class="img-fluid mx-auto mb-2"
-								style="height: 140px; object-fit: contain;">
-							<p class="text-center mb-0 fw-semibold">HP Laptop</p>
-						</div>
-					</div>
-				</div>
-
 			</div>
 		</div>
 		<!-- End Latest Product Module -->

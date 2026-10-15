@@ -23,29 +23,32 @@
 						<div class="card-body">
 
 							<!-- Error Alert -->
-							<div th:if="${param.error}" class="alert alert-danger text-center p-2 mb-3" role="alert">
-								<th:block th:if="${session.SPRING_SECURITY_LAST_EXCEPTION != null}">
+							<div th:if="${param.error}"
+								class="alert alert-danger text-center p-2 mb-3" role="alert">
+								<th:block
+									th:if="${session.SPRING_SECURITY_LAST_EXCEPTION != null}">
 									[[${session.SPRING_SECURITY_LAST_EXCEPTION.message}]]
 								</th:block>
-								<th:block th:if="${session.SPRING_SECURITY_LAST_EXCEPTION == null}">
+								<th:block
+									th:if="${session.SPRING_SECURITY_LAST_EXCEPTION == null}">
 									Invalid email or password!
 								</th:block>
 							</div>
 
 							<!-- Logout Alert -->
-							<div th:if="${param.logout}" class="alert alert-success text-center p-2 mb-3" role="alert">
-								You have been logged out successfully.
-							</div>
+							<div th:if="${param.logout}"
+								class="alert alert-success text-center p-2 mb-3" role="alert">
+								You have been logged out successfully.</div>
 
 							<form action="/login" method="post">
 								<div class="mb-3">
-									<label class="form-label">Email</label> 
-									<input class="form-control" name="username" type="email" required>
+									<label class="form-label">Email</label> <input
+										class="form-control" name="username" type="email" required>
 								</div>
 
 								<div class="mb-3">
-									<label class="form-label">Password</label> 
-									<input class="form-control" name="password" type="password" required>
+									<label class="form-label">Password</label> <input
+										class="form-control" name="password" type="password" required>
 								</div>
 
 								<button type="submit" class="btn bg-primary text-white w-100">Login</button>
@@ -54,8 +57,9 @@
 
 						<!-- Card Footer -->
 						<div class="card-footer text-center">
-							<a href="/forgot-password" class="text-decoration-none">Forgot Password?</a><br>
-							Don't have an account? <a href="/register" class="text-decoration-none">Create one</a>
+							<a href="/forgot-password" class="text-decoration-none">Forgot
+								Password?</a><br> Don't have an account? <a href="/register"
+								class="text-decoration-none">Create one</a>
 						</div>
 
 					</div>
