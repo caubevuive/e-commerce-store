@@ -6,6 +6,10 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
 @Entity
 public class UserDtls {
@@ -14,14 +18,33 @@ public class UserDtls {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 
+	@NotBlank(message = "Name cannot be blank")
 	private String name;
+
+	@NotBlank(message = "Mobile number cannot be blank")
+	@Pattern(regexp = "^\\d{10}$", message = "Mobile number must be 10 digits")
 	private String mobileNumber;
+
+	@NotBlank(message = "Email cannot be blank")
+	@Email(message = "Invalid email format")
 	private String email;
+
+	@NotBlank(message = "Address cannot be blank")
 	private String address;
+
+	@NotBlank(message = "City cannot be blank")
 	private String city;
+
+	@NotBlank(message = "State cannot be blank")
 	private String state;
+
+	@NotBlank(message = "Pincode cannot be blank")
 	private String pincode;
+
+	@NotBlank(message = "Password cannot be blank")
+	@Size(min = 6, message = "Password must be at least 6 characters")
 	private String password;
+
 	private String profileImage;
 	private String role;
 	private Boolean isEnable;

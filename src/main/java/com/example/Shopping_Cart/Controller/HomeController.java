@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.ObjectUtils;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,6 +28,7 @@ import com.example.Shopping_Cart.service.UserService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 
 @Controller
 public class HomeController {
@@ -84,7 +85,8 @@ public class HomeController {
 	}
 
 	@GetMapping("/register")
-	public String register() {
+	public String register(Model model) {
+		model.addAttribute("user", new UserDtls());
 		return "register";
 	}
 
@@ -140,21 +142,27 @@ public class HomeController {
 	}
 
 	@PostMapping("/saveUser")
-	public String saveUser(@ModelAttribute UserDtls user, @RequestParam("img") MultipartFile file,
-			HttpSession session) {
-		Boolean existsEmail = userService.existsEmail(user.getEmail());
+	public String saveUser(@Valid @ModelAttribute("user") UserDtls user, BindingResult result,
+			@RequestParam("img") MultipartFile file, HttpSession session, Model model) {
 
+		if (result.hasErrors()) {
+
+			model.addAttribute("user", user);
+			return "register";
+		}
+
+		Boolean existsEmail = userService.existsEmail(user.getEmail());
 		if (existsEmail) {
-			session.setAttribute("errorMsg", "Email already exists!");
+			session.setAttribute("errorMsg", "Email already exists");
 		} else {
 			UserDtls saveUser = userService.saveUser(user, file);
-
-			if (!ObjectUtils.isEmpty(saveUser)) {
-				session.setAttribute("succMsg", "Registered successfully!");
+			if (saveUser != null) {
+				session.setAttribute("succMsg", "Registered successfully");
 			} else {
-				session.setAttribute("errorMsg", "Something went wrong on server!");
+				session.setAttribute("errorMsg", "Something went wrong on server");
 			}
 		}
+
 		return "redirect:/register";
 	}
 
