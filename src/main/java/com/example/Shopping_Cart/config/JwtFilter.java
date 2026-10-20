@@ -3,10 +3,12 @@ package com.example.Shopping_Cart.config;
 import java.io.IOException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -23,6 +25,7 @@ public class JwtFilter extends OncePerRequestFilter {
 	private JwtService jwtService;
 
 	@Autowired
+	@Lazy
 	private UserDetailsService userDetailsService;
 
 	@Override
@@ -41,15 +44,23 @@ public class JwtFilter extends OncePerRequestFilter {
 			}
 		}
 
-		if (token != null && jwtService.validateToken(token)) {
-			username = jwtService.extractUsername(token);
+		if (token != null) {
+			try {
+				username = jwtService.extractUsername(token);
+			} catch (Exception e) {
+
+			}
 		}
 
 		if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 			UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-			UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails, null,
-					userDetails.getAuthorities());
-			SecurityContextHolder.getContext().setAuthentication(authToken);
+
+			if (jwtService.validateToken(token)) {
+				UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails,
+						null, userDetails.getAuthorities());
+				authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+				SecurityContextHolder.getContext().setAuthentication(authToken);
+			}
 		}
 
 		filterChain.doFilter(request, response);

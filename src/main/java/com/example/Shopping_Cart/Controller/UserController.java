@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.Shopping_Cart.config.JwtService;
 import com.example.Shopping_Cart.model.Cart;
 import com.example.Shopping_Cart.model.OrderRequest;
 import com.example.Shopping_Cart.model.ProductOrder;
@@ -21,6 +22,8 @@ import com.example.Shopping_Cart.service.CartService;
 import com.example.Shopping_Cart.service.OrderService;
 import com.example.Shopping_Cart.service.UserService;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
@@ -36,14 +39,50 @@ public class UserController {
 	@Autowired
 	private OrderService orderService;
 
+	@Autowired
+	private JwtService jwtService;
+
+	private UserDtls getLoggedInUser(Principal p, HttpServletRequest request) {
+		String email = null;
+
+		if (request.getCookies() != null) {
+			for (Cookie cookie : request.getCookies()) {
+				if ("JWT_TOKEN".equals(cookie.getName())) {
+					try {
+						email = jwtService.extractUsername(cookie.getValue());
+					} catch (Exception e) {
+					}
+					break;
+				}
+			}
+		}
+
+		if (email == null && p != null) {
+			if (p instanceof org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken) {
+				var oauthToken = (org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken) p;
+				email = oauthToken.getPrincipal().getAttribute("email");
+			} else {
+				email = p.getName();
+			}
+		}
+
+		return email != null ? userService.getUserByEmail(email) : null;
+	}
+
 	@GetMapping("/")
 	public String home() {
 		return "user/home";
 	}
 
 	@GetMapping("/cart")
-	public String loadCartPage(Principal p, Model m) {
-		UserDtls user = userService.getUserByEmail(p.getName());
+	public String loadCartPage(Principal p, Model m, HttpServletRequest request) {
+		UserDtls user = getLoggedInUser(p, request);
+		if (user == null) {
+			return "redirect:/signin";
+		}
+
+		m.addAttribute("user", user);
+
 		List<Cart> carts = cartService.getCartsByUser(user.getId());
 		m.addAttribute("carts", carts);
 
@@ -67,8 +106,15 @@ public class UserController {
 	}
 
 	@GetMapping("/orders")
-	public String orderPage(Principal p, Model m) {
-		UserDtls user = userService.getUserByEmail(p.getName());
+	public String orderPage(Principal p, Model m, HttpServletRequest request) {
+
+		UserDtls user = getLoggedInUser(p, request);
+		if (user == null) {
+			return "redirect:/signin";
+		}
+
+		m.addAttribute("user", user);
+
 		List<Cart> carts = cartService.getCartsByUser(user.getId());
 		m.addAttribute("carts", carts);
 
@@ -84,9 +130,14 @@ public class UserController {
 	}
 
 	@PostMapping("/save-order")
-	public String saveOrder(@ModelAttribute OrderRequest request, Principal p, HttpSession session) {
-		UserDtls user = userService.getUserByEmail(p.getName());
-		orderService.saveOrder(user.getId(), request);
+	public String saveOrder(@ModelAttribute OrderRequest requestModel, Principal p, HttpServletRequest request,
+			HttpSession session) {
+		UserDtls user = getLoggedInUser(p, request);
+		if (user == null) {
+			return "redirect:/signin";
+		}
+
+		orderService.saveOrder(user.getId(), requestModel);
 
 		session.setAttribute("succMsg", "Order placed successfully!");
 		return "redirect:/user/success";
@@ -98,8 +149,12 @@ public class UserController {
 	}
 
 	@GetMapping("/my-orders")
-	public String myOrder(Principal p, Model m) {
-		UserDtls loginUser = userService.getUserByEmail(p.getName());
+	public String myOrder(Principal p, Model m, HttpServletRequest request) {
+		UserDtls loginUser = getLoggedInUser(p, request);
+		if (loginUser == null) {
+			return "redirect:/signin";
+		}
+
 		List<ProductOrder> orders = orderService.getOrdersByUser(loginUser.getId());
 		m.addAttribute("orders", orders);
 		return "user/my_orders";
@@ -120,8 +175,11 @@ public class UserController {
 	}
 
 	@GetMapping("/profile")
-	public String profile(Principal p, Model m) {
-		UserDtls user = userService.getUserByEmail(p.getName());
+	public String profile(Principal p, Model m, HttpServletRequest request) {
+		UserDtls user = getLoggedInUser(p, request);
+		if (user == null) {
+			return "redirect:/signin";
+		}
 		m.addAttribute("user", user);
 		return "user/profile";
 	}
@@ -145,8 +203,11 @@ public class UserController {
 
 	@PostMapping("/change-password")
 	public String changePassword(@RequestParam String oldPassword, @RequestParam String newPassword, Principal p,
-			HttpSession session) {
-		UserDtls user = userService.getUserByEmail(p.getName());
+			HttpServletRequest request, HttpSession session) {
+		UserDtls user = getLoggedInUser(p, request);
+		if (user == null) {
+			return "redirect:/signin";
+		}
 
 		boolean matchPassword = userService.changePassword(user, oldPassword, newPassword);
 

@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.Shopping_Cart.config.JwtService;
 import com.example.Shopping_Cart.model.Cart;
 import com.example.Shopping_Cart.model.Category;
 import com.example.Shopping_Cart.model.Product;
@@ -48,23 +49,41 @@ public class HomeController {
 	@Autowired
 	private CartService cartService;
 
-	@ModelAttribute
-	public void getUserDetails(Principal p, Model m) {
-		if (p != null) {
-			String email;
+	@Autowired
+	private JwtService jwtService;
 
+	@ModelAttribute
+	public void getUserDetails(Principal p, Model m, jakarta.servlet.http.HttpServletRequest request) {
+		String email = null;
+
+		if (request.getCookies() != null) {
+			for (jakarta.servlet.http.Cookie cookie : request.getCookies()) {
+				if ("JWT_TOKEN".equals(cookie.getName())) {
+					try {
+
+						email = jwtService.extractUsername(cookie.getValue());
+					} catch (Exception e) {
+
+					}
+					break;
+				}
+			}
+		}
+
+		if (email == null && p != null) {
 			if (p instanceof org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken) {
 				var oauthToken = (org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken) p;
-				var oauthUser = oauthToken.getPrincipal();
-				email = oauthUser.getAttribute("email");
+				email = oauthToken.getPrincipal().getAttribute("email");
 			} else {
-
 				email = p.getName();
 			}
+		}
 
+		if (email != null) {
 			UserDtls userDtls = userService.getUserByEmail(email);
 			if (userDtls != null) {
 				m.addAttribute("user", userDtls);
+
 				List<Cart> carts = cartService.getCartsByUser(userDtls.getId());
 				m.addAttribute("countCart", carts.size());
 			} else {

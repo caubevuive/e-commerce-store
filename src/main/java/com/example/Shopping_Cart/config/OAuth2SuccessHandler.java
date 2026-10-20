@@ -1,9 +1,13 @@
 package com.example.Shopping_Cart.config;
 
 import java.io.IOException;
+import java.util.Collections;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -43,13 +47,20 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 			userRepository.save(user);
 		}
 
+		// Tạo token JWT
 		String token = jwtService.generateToken(email, user.getRole());
 
+		// Tạo Cookie chứa JWT
 		Cookie cookie = new Cookie("JWT_TOKEN", token);
 		cookie.setHttpOnly(true);
 		cookie.setPath("/");
 		cookie.setMaxAge(24 * 60 * 60);
 		response.addCookie(cookie);
+
+		SimpleGrantedAuthority authority = new SimpleGrantedAuthority(user.getRole());
+		UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(oAuth2User, null,
+				Collections.singleton(authority));
+		SecurityContextHolder.getContext().setAuthentication(authToken);
 
 		response.sendRedirect("/");
 	}

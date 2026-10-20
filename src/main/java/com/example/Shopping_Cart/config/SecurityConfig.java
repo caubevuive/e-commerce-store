@@ -8,6 +8,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter; // 👈 Nhớ import thư viện này
 
 @Configuration
 public class SecurityConfig {
@@ -20,6 +21,9 @@ public class SecurityConfig {
 
 	@Autowired
 	private OAuth2SuccessHandler oAuth2SuccessHandler;
+
+	@Autowired
+	private JwtFilter jwtFilter;
 
 	@Autowired
 	private PasswordEncoder passwordEncoder;
@@ -52,6 +56,8 @@ public class SecurityConfig {
 
 				.oauth2Login(oauth2 -> oauth2.loginPage("/signin").successHandler(oAuth2SuccessHandler))
 				.logout(logout -> logout.logoutUrl("/logout").logoutSuccessUrl("/signin?logout").permitAll());
+
+		http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
 		return http.build();
 	}

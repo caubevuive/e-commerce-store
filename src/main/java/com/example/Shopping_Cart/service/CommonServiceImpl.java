@@ -3,6 +3,7 @@ package com.example.Shopping_Cart.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async; // 👈 1. Import thư viện Async
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -27,6 +28,7 @@ public class CommonServiceImpl implements CommonService {
 	}
 
 	@Override
+	@Async
 	public Boolean sendMail(String url, String recipientEmail) {
 		try {
 			MimeMessage message = mailSender.createMimeMessage();
