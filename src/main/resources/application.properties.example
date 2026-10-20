@@ -17,3 +17,10 @@ spring.mail.username=YOUR_EMAIL_HERE
 spring.mail.password=YOUR_16_DIGIT_APP_PASSWORD_HERE
 spring.mail.properties.mail.smtp.auth=true
 spring.mail.properties.mail.smtp.starttls.enable=true
+
+# ==========================================
+# 3. GOOGLE OAUTH2 & JWT CONFIGURATION
+# ==========================================
+spring.security.oauth2.client.registration.google.client-id=YOUR_GOOGLE_CLIENT_ID
+spring.security.oauth2.client.registration.google.client-secret=YOUR_GOOGLE_CLIENT_SECRET
+spring.security.oauth2.client.registration.google.scope=openid,profile,email

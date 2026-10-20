@@ -19,6 +19,9 @@ public class SecurityConfig {
 	private AuthFailureHandlerImpl authenticationFailureHandler;
 
 	@Autowired
+	private OAuth2SuccessHandler oAuth2SuccessHandler;
+
+	@Autowired
 	private PasswordEncoder passwordEncoder;
 
 	@Bean
@@ -46,8 +49,11 @@ public class SecurityConfig {
 				.formLogin(form -> form.loginPage("/signin").loginProcessingUrl("/login")
 						.successHandler(authenticationSuccessHandler).failureHandler(authenticationFailureHandler)
 						.permitAll())
+
+				.oauth2Login(oauth2 -> oauth2.loginPage("/signin").successHandler(oAuth2SuccessHandler))
 				.logout(logout -> logout.logoutUrl("/logout").logoutSuccessUrl("/signin?logout").permitAll());
 
 		return http.build();
 	}
+
 }

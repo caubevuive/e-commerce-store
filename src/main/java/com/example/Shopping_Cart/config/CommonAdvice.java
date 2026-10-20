@@ -22,13 +22,12 @@ public class CommonAdvice {
 	public void addHeaderStatus(HttpServletRequest request, Model model) {
 		String uri = request.getRequestURI();
 
-		// 1. Kiểm tra trạng thái Header và ẩn Footer khi vào trang Admin hoặc
-		// Login/Register
 		if (uri != null && (uri.equals("/signin") || uri.equals("/login") || uri.equals("/register")
-				|| uri.startsWith("/admin"))) {
-			model.addAttribute("hideHeader", true);
+				|| uri.startsWith("/admin") || uri.startsWith("/product"))) {
+			model.addAttribute("hideHeader", uri.startsWith("/admin") || uri.equals("/signin") || uri.equals("/login")
+					|| uri.equals("/register"));
 			model.addAttribute("isProductsPage", false);
-			model.addAttribute("hideFooter", true); // Bắt buộc ẩn footer ở trang admin
+			model.addAttribute("hideFooter", true);
 		} else if (uri != null && uri.startsWith("/products")) {
 			model.addAttribute("hideHeader", false);
 			model.addAttribute("isProductsPage", true);
@@ -39,7 +38,6 @@ public class CommonAdvice {
 			model.addAttribute("hideFooter", false);
 		}
 
-		// 2. Tự động bơm danh sách Category cho header
 		try {
 			List<Category> categories = categoryService.getAllCategory();
 			model.addAttribute("categorys", categories);

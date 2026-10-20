@@ -12,10 +12,9 @@
 				
 				<div class="col-md-5 p-4 text-center">
 					<img th:src="@{/img/ecom.png}" class="img-fluid"
-						alt="Register Image">
+						alt="Register Image" style="max-height: 450px; object-fit: contain;">
 				</div>
 
-				
 				<div class="col-md-7">
 					<div class="card shadow">
 						<div class="card-header text-center bg-primary text-white">
@@ -35,7 +34,6 @@
 						</div>
 
 						<div class="card-body">
-							
 							<form action="/saveUser" method="post"
 								enctype="multipart/form-data" th:object="${user}">
 
@@ -117,13 +115,21 @@
 									</div>
 								</div>
 
-								<button class="btn btn-primary col-md-12">Register</button>
+								<button class="btn btn-primary col-md-12 py-2 mb-3">Register</button>
 							</form>
+
+							<div class="position-relative text-center my-3">
+								<hr class="border-secondary opacity-25">
+								<span class="position-absolute top-50 start-50 translate-middle px-3 text-muted small bg-white">Hoặc</span>
+							</div>
+
+							
+							<a href="/oauth2/authorization/google" class="btn w-100 d-flex align-items-center justify-content-center gap-2 py-2 text-dark bg-white border shadow-sm rounded-2" style="border-color: #dadce0 !important; transition: background-color 0.2s;">
+								<i class="fa-brands fa-google text-danger"></i>
+								<span class="fw-medium" style="font-size: 14.5px; color: #3c4043;">Log in / Sign up with Google</span>
+							</a>
 						</div>
 
-						<div class="card-footer text-center">
-							Have an account ? <a href="/signin" class="text-decoration-none">Login</a>
-						</div>
 					</div>
 				</div>
 			</div>

@@ -51,12 +51,25 @@ public class HomeController {
 	@ModelAttribute
 	public void getUserDetails(Principal p, Model m) {
 		if (p != null) {
-			String email = p.getName();
-			UserDtls userDtls = userService.getUserByEmail(email);
-			m.addAttribute("user", userDtls);
+			String email;
 
-			List<Cart> carts = cartService.getCartsByUser(userDtls.getId());
-			m.addAttribute("countCart", carts.size());
+			if (p instanceof org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken) {
+				var oauthToken = (org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken) p;
+				var oauthUser = oauthToken.getPrincipal();
+				email = oauthUser.getAttribute("email");
+			} else {
+
+				email = p.getName();
+			}
+
+			UserDtls userDtls = userService.getUserByEmail(email);
+			if (userDtls != null) {
+				m.addAttribute("user", userDtls);
+				List<Cart> carts = cartService.getCartsByUser(userDtls.getId());
+				m.addAttribute("countCart", carts.size());
+			} else {
+				m.addAttribute("countCart", 0);
+			}
 		} else {
 			m.addAttribute("countCart", 0);
 		}
