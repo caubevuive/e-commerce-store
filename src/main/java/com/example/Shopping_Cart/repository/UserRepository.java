@@ -31,4 +31,14 @@ public interface UserRepository extends JpaRepository<UserDtls, Integer> {
 	@Query("UPDATE UserDtls u SET u.accountNonLocked = ?1, u.lockTime = ?2, u.failedAttempt = ?3, u.lockDuration = ?4 WHERE u.email = ?5")
 	public void accountLock(Boolean accountNonLocked, java.util.Date lockTime, int failedAttempt, int lockDuration,
 			String email);
+
+	@Modifying
+	@Transactional
+	@Query("UPDATE UserDtls u SET u.isEnable = ?1 WHERE u.id = ?2")
+	public void updateAccountStatusQuery(Boolean status, Integer id);
+
+	@Modifying
+	@Transactional
+	@Query("UPDATE UserDtls u SET u.role = ?1 WHERE u.id = ?2")
+	public void updateUserRoleQuery(String role, Integer userId);
 }

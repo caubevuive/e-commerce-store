@@ -7,7 +7,6 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -19,7 +18,10 @@ import com.example.Shopping_Cart.model.UserDtls;
 import com.example.Shopping_Cart.repository.UserRepository;
 import com.example.Shopping_Cart.service.UserService;
 
+import jakarta.transaction.Transactional;
+
 @Service
+@Transactional
 public class UserServiceImpl implements UserService {
 
 	@Autowired
@@ -82,15 +84,13 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public Boolean updateAccountStatus(Integer id, Boolean status) {
-		Optional<UserDtls> findByUser = userRepository.findById(id);
-
-		if (findByUser.isPresent()) {
-			UserDtls userDtls = findByUser.get();
-			userDtls.setIsEnable(status);
-			userRepository.save(userDtls);
+		try {
+			userRepository.updateAccountStatusQuery(status, id);
 			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
 		}
-		return false;
 	}
 
 	@Override
@@ -217,12 +217,12 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public Boolean updateUserRole(Integer userId, String role) {
-		UserDtls user = userRepository.findById(userId).orElse(null);
-		if (user != null) {
-			user.setRole(role);
-			userRepository.save(user);
+		try {
+			userRepository.updateUserRoleQuery(role, userId);
 			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
 		}
-		return false;
 	}
 }

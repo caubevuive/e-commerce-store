@@ -68,10 +68,10 @@ public class HomeController {
 	@GetMapping("/")
 	public String index(Model m) {
 		List<Category> allActiveCategory = categoryService.getAllActiveCategory().stream()
-				.sorted((c1, c2) -> c2.getId().compareTo(c1.getId())).limit(6).toList();
+				.sorted((c1, c2) -> c2.getId().compareTo(c1.getId())).toList();
 
 		List<Product> allActiveProducts = productService.getAllActiveProducts("").stream()
-				.sorted((p1, p2) -> p2.getId().compareTo(p1.getId())).limit(8).toList();
+				.sorted((p1, p2) -> p2.getId().compareTo(p1.getId())).toList();
 
 		m.addAttribute("category", allActiveCategory);
 		m.addAttribute("categorys", allActiveCategory);

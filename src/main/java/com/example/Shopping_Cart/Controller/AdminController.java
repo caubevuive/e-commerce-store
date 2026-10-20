@@ -95,8 +95,16 @@ public class AdminController {
 	}
 
 	@GetMapping("/category")
-	public String category(Model model) {
-		model.addAttribute("categorys", categoryService.getAllCategory());
+	public String category(Model m, @RequestParam(name = "page", defaultValue = "0") int page) {
+		int pageSize = 10;
+		Page<Category> pageCategory = categoryService.getAllCategoryPagination(page, pageSize);
+
+		m.addAttribute("categorys", pageCategory.getContent());
+		m.addAttribute("pageNo", pageCategory.getNumber());
+		m.addAttribute("totalPages", pageCategory.getTotalPages());
+		m.addAttribute("totalElements", pageCategory.getTotalElements());
+		m.addAttribute("hideFooter", true);
+
 		return "admin/category";
 	}
 
