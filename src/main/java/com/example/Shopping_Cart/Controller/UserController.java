@@ -1,7 +1,9 @@
 package com.example.Shopping_Cart.Controller;
 
 import java.security.Principal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.Shopping_Cart.config.JwtService;
@@ -21,6 +24,7 @@ import com.example.Shopping_Cart.model.UserDtls;
 import com.example.Shopping_Cart.service.CartService;
 import com.example.Shopping_Cart.service.OrderService;
 import com.example.Shopping_Cart.service.UserService;
+import com.example.Shopping_Cart.service.VNPayService;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -41,6 +45,9 @@ public class UserController {
 
 	@Autowired
 	private JwtService jwtService;
+
+	@Autowired
+	private VNPayService vnpayService;
 
 	private UserDtls getLoggedInUser(Principal p, HttpServletRequest request) {
 		String email = null;
@@ -137,9 +144,70 @@ public class UserController {
 			return "redirect:/signin";
 		}
 
+		if ("Online Payment".equals(requestModel.getPaymentType())) {
+			List<Cart> carts = cartService.getCartsByUser(user.getId());
+			double totalOrderPrice = 0.0;
+			if (carts != null && !carts.isEmpty()) {
+				for (Cart c : carts) {
+					if (c.getProduct() != null && c.getProduct().getDiscountPrice() != null) {
+						totalOrderPrice += c.getProduct().getDiscountPrice() * c.getQuantity();
+					}
+				}
+			}
+
+			session.setAttribute("orderRequest", requestModel);
+			session.setAttribute("userId", user.getId());
+			session.setAttribute("totalOrderPrice", totalOrderPrice);
+
+			return "redirect:/user/qr-payment";
+		}
+
 		orderService.saveOrder(user.getId(), requestModel);
 
 		session.setAttribute("succMsg", "Order placed successfully!");
+		return "redirect:/user/success";
+	}
+
+	@GetMapping("/qr-payment")
+	public String loadQRPayment(Principal p, Model m, HttpServletRequest request, HttpSession session) {
+		UserDtls user = getLoggedInUser(p, request);
+		if (user == null) {
+			return "redirect:/signin";
+		}
+		Double totalOrderPrice = (Double) session.getAttribute("totalOrderPrice");
+		if (totalOrderPrice == null) {
+			return "redirect:/user/cart";
+		}
+
+		m.addAttribute("totalOrderPrice", totalOrderPrice);
+		m.addAttribute("bankId", "MB"); // Mã định danh MB Bank trên VietQR
+		m.addAttribute("accountNo", "10022048888");
+		m.addAttribute("accountName", "VU ANH QUAN");
+
+		return "user/qr_payment";
+	}
+
+	@GetMapping("/qr-success")
+	public String qrSuccess(Principal p, HttpServletRequest request, HttpSession session) {
+		UserDtls user = getLoggedInUser(p, request);
+		if (user == null) {
+			return "redirect:/signin";
+		}
+
+		OrderRequest orderRequest = (OrderRequest) session.getAttribute("orderRequest");
+		Integer userId = (Integer) session.getAttribute("userId");
+
+		if (orderRequest != null && userId != null) {
+
+			orderService.saveOrder(userId, orderRequest);
+
+			session.removeAttribute("orderRequest");
+			session.removeAttribute("userId");
+			session.removeAttribute("totalOrderPrice");
+		}
+
+		session.setAttribute("succMsg",
+				"Đã nhận yêu cầu! Đơn hàng sẽ được xử lý ngay sau khi shop kiểm tra tài khoản MB Bank.");
 		return "redirect:/user/success";
 	}
 
@@ -218,5 +286,16 @@ public class UserController {
 		}
 
 		return "redirect:/user/change-password";
+	}
+
+	@GetMapping("/check-payment-status")
+	@ResponseBody
+	public Map<String, Object> checkPaymentStatus(HttpSession session) {
+		Map<String, Object> response = new HashMap<>();
+
+		Boolean isPaid = (Boolean) session.getAttribute("isPaid");
+
+		response.put("isPaid", isPaid != null && isPaid);
+		return response;
 	}
 }
