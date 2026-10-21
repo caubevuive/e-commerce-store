@@ -83,12 +83,10 @@
     display: none;                     
 }
 
-
 .category-card-item {
     width: 180px;
     height: 100%;
 }
-
 
 .cat-btn-prev, .cat-btn-next {
     position: absolute;
@@ -119,4 +117,19 @@
 
 .cat-btn-next {
     right: -20px;
+}
+
+/* ==================== OTP VERIFICATION PAGE STYLING ==================== */
+.otp-card {
+    max-width: 450px;
+    margin: 80px auto;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+
+.otp-input {
+    letter-spacing: 8px;
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
 }

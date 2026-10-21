@@ -29,7 +29,7 @@ public class VNPayService {
 		String vnp_IpAddr = "127.0.0.1";
 		String vnp_TmnCode = VNPayConfig.vnp_TmnCode;
 
-		long amount = totalAmount * 100; // VNPay yêu cầu nhân 100
+		long amount = totalAmount * 100;
 
 		Map<String, String> vnp_Params = new HashMap<>();
 		vnp_Params.put("vnp_Version", vnp_Version);
@@ -37,7 +37,7 @@ public class VNPayService {
 		vnp_Params.put("vnp_TmnCode", vnp_TmnCode);
 		vnp_Params.put("vnp_Amount", String.valueOf(amount));
 		vnp_Params.put("vnp_CurrCode", "VND");
-		vnp_Params.put("vnp_BankCode", "NCB"); // Chọn ngân hàng test NCB
+		vnp_Params.put("vnp_BankCode", "NCB");
 		vnp_Params.put("vnp_TxnRef", vnp_TxnRef);
 		vnp_Params.put("vnp_OrderInfo", orderInfo);
 		vnp_Params.put("vnp_OrderType", "other");

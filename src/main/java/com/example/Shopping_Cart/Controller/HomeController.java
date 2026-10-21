@@ -24,6 +24,7 @@ import com.example.Shopping_Cart.model.UserDtls;
 import com.example.Shopping_Cart.service.CartService;
 import com.example.Shopping_Cart.service.CategoryService;
 import com.example.Shopping_Cart.service.CommonService;
+import com.example.Shopping_Cart.service.EmailService;
 import com.example.Shopping_Cart.service.ProductService;
 import com.example.Shopping_Cart.service.UserService;
 
@@ -52,6 +53,9 @@ public class HomeController {
 	@Autowired
 	private JwtService jwtService;
 
+	@Autowired
+	private EmailService emailService;
+
 	@ModelAttribute
 	public void getUserDetails(Principal p, Model m, jakarta.servlet.http.HttpServletRequest request) {
 		String email = null;
@@ -60,7 +64,6 @@ public class HomeController {
 			for (jakarta.servlet.http.Cookie cookie : request.getCookies()) {
 				if ("JWT_TOKEN".equals(cookie.getName())) {
 					try {
-
 						email = jwtService.extractUsername(cookie.getValue());
 					} catch (Exception e) {
 
@@ -178,24 +181,91 @@ public class HomeController {
 			@RequestParam("img") MultipartFile file, HttpSession session, Model model) {
 
 		if (result.hasErrors()) {
-
 			model.addAttribute("user", user);
 			return "register";
 		}
 
 		Boolean existsEmail = userService.existsEmail(user.getEmail());
 		if (existsEmail) {
-			session.setAttribute("errorMsg", "Email already exists");
-		} else {
-			UserDtls saveUser = userService.saveUser(user, file);
-			if (saveUser != null) {
-				session.setAttribute("succMsg", "Registered successfully");
-			} else {
-				session.setAttribute("errorMsg", "Something went wrong on server");
-			}
+			session.setAttribute("errorMsg", "Email address is already registered!");
+			return "redirect:/register";
 		}
 
-		return "redirect:/register";
+		String otp = emailService.generateOTP();
+
+		session.setAttribute("tempUser", user);
+		session.setAttribute("tempFile", file);
+		session.setAttribute("generatedOtp", otp);
+
+		// Send OTP via email
+		try {
+			emailService.sendOtpEmail(user.getEmail(), otp);
+			session.setAttribute("succMsg", "An OTP code has been sent to your email. Please verify!");
+		} catch (Exception e) {
+			session.setAttribute("errorMsg", "Failed to send email. Please check server settings!");
+			return "redirect:/register";
+		}
+
+		return "redirect:/verify-otp";
+	}
+
+	// 2. Display OTP verification page
+	@GetMapping("/verify-otp")
+	public String showVerifyOtpPage(HttpSession session, Model model) {
+		UserDtls tempUser = (UserDtls) session.getAttribute("tempUser");
+		if (tempUser == null) {
+			return "redirect:/register";
+		}
+		return "verify_otp";
+	}
+
+	// 3. Process OTP code submission and save user to DB if correct
+	@PostMapping("/verify-otp")
+	public String verifyOtp(@RequestParam("otp") String inputOtp, HttpSession session, Model model) {
+		String sessionOtp = (String) session.getAttribute("generatedOtp");
+		UserDtls tempUser = (UserDtls) session.getAttribute("tempUser");
+		MultipartFile file = (MultipartFile) session.getAttribute("tempFile");
+
+		if (tempUser == null || sessionOtp == null) {
+			return "redirect:/register";
+		}
+
+		if (sessionOtp.equals(inputOtp.trim())) {
+			// Save user permanently into database
+			UserDtls saveUser = userService.saveUser(tempUser, file);
+
+			if (saveUser != null) {
+				// Clear temporary session data
+				session.removeAttribute("tempUser");
+				session.removeAttribute("tempFile");
+				session.removeAttribute("generatedOtp");
+
+				session.setAttribute("succMsg", "Account registered successfully! You can now log in.");
+				return "redirect:/signin";
+			} else {
+				session.setAttribute("errorMsg", "Something went wrong on server during registration.");
+				return "redirect:/register";
+			}
+		} else {
+			model.addAttribute("error", "Invalid OTP code. Please try again.");
+			return "verify_otp";
+		}
+	}
+
+	// 4. Handle resend OTP request
+	@GetMapping("/resend-otp")
+	public String resendOtp(HttpSession session, Model model) {
+		UserDtls tempUser = (UserDtls) session.getAttribute("tempUser");
+		if (tempUser == null) {
+			return "redirect:/register";
+		}
+
+		String newOtp = emailService.generateOTP();
+		session.setAttribute("generatedOtp", newOtp);
+		emailService.sendOtpEmail(tempUser.getEmail(), newOtp);
+
+		model.addAttribute("msg", "A new OTP code has been sent to your email.");
+		return "verify_otp";
 	}
 
 	@GetMapping("/forgot-password")

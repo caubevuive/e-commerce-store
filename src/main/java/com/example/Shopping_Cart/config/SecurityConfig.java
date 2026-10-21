@@ -8,7 +8,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter; // 👈 Nhớ import thư viện này
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 public class SecurityConfig {
@@ -45,9 +45,9 @@ public class SecurityConfig {
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http.csrf(csrf -> csrf.disable())
 				.authorizeHttpRequests(auth -> auth
-						.requestMatchers("/", "/signin", "/login", "/register", "/saveUser", "/forgot-password",
-								"/send-forgot-password", "/reset-password", "/change-password", "/products/**",
-								"/product/**", "/css/**", "/js/**", "/img/**")
+						.requestMatchers("/", "/signin", "/login", "/register", "/saveUser", "/verify-otp",
+								"/resend-otp", "/forgot-password", "/send-forgot-password", "/reset-password",
+								"/change-password", "/products/**", "/product/**", "/css/**", "/js/**", "/img/**")
 						.permitAll().requestMatchers("/user/**").hasRole("USER").requestMatchers("/admin/**")
 						.hasRole("ADMIN").anyRequest().authenticated())
 				.formLogin(form -> form.loginPage("/signin").loginProcessingUrl("/login")
@@ -55,7 +55,8 @@ public class SecurityConfig {
 						.permitAll())
 
 				.oauth2Login(oauth2 -> oauth2.loginPage("/signin").successHandler(oAuth2SuccessHandler))
-				.logout(logout -> logout.logoutUrl("/logout").logoutSuccessUrl("/signin?logout").permitAll());
+				.logout(logout -> logout.logoutUrl("/logout").logoutSuccessUrl("/signin?logout")
+						.deleteCookies("JWT_TOKEN").permitAll());
 
 		http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 

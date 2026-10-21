@@ -44,13 +44,20 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 			user.setName(name);
 			user.setRole("ROLE_USER");
 			user.setIsEnable(true);
+
+			// Set default values matching entity validation rules
+			user.setPassword("OAUTH2_USER_DEFAULT_PASSWORD");
+			user.setMobileNumber("0000000000"); // Phải đủ 10 chữ số để khớp với @Size hoặc @Pattern trong UserDtls
+			user.setAddress("N/A");
+			user.setCity("N/A");
+			user.setState("N/A");
+			user.setPincode("000000");
+
 			userRepository.save(user);
 		}
 
-		// Tạo token JWT
 		String token = jwtService.generateToken(email, user.getRole());
 
-		// Tạo Cookie chứa JWT
 		Cookie cookie = new Cookie("JWT_TOKEN", token);
 		cookie.setHttpOnly(true);
 		cookie.setPath("/");
