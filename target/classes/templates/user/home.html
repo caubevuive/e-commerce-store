@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	th:replace="~{base::layout(~{::section})}">
+<head>
+<meta charset="UTF-8">
+<title>User Dashboard</title>
+</head>
+<body>
+	<section>
+		<div class="container my-5">
+			<div class="row">
+				<div class="col-md-12 text-center">
+					<div class="card shadow-sm border text-center p-5">
+						<h2 class="text-primary mb-3">Welcome to User Dashboard</h2>
+						<p class="fs-5 text-muted mb-4">You have successfully logged
+							into the system!</p>
+
+						<div class="d-flex justify-content-center gap-3">
+							<a href="/" class="btn btn-primary px-4">Home</a> <a
+								href="/logout" class="btn btn-danger px-4">Logout</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+</body>
+</html>

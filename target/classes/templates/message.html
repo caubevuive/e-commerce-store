@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	th:replace="~{base::layout(~{::section})}">
+<head>
+<meta charset="UTF-8">
+<title>Notification</title>
+</head>
+<body>
+	<section>
+		<div class="container my-5 text-center">
+			<div class="alert alert-warning d-inline-block px-5 py-4">
+				<h4>[[${msg}]]</h4>
+				<a href="/forgot-password" class="btn btn-primary mt-3">Request a new reset link</a>
+			</div>
+		</div>
+	</section>
+</body>
+</html>

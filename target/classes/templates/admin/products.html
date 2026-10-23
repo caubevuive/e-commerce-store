@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	th:replace="~{base::layout(~{::section})}">
+<head>
+<meta charset="UTF-8">
+<title>View Products</title>
+</head>
+<body>
+	<section>
+		<div class="container-fluid p-4 mt-3">
+
+			<div class="row mb-3">
+				<div class="col-md-12">
+					<a href="/admin/" class="text-decoration-none fw-semibold"> <i
+						class="fa-solid fa-arrow-left me-1"></i> Back to Dashboard
+					</a>
+				</div>
+			</div>
+
+			<div class="card shadow-sm border-0">
+				<div class="card-header bg-white text-center py-3">
+					<p class="fs-4 fw-bold mb-2">View Products</p>
+
+					<th:block th:if="${session.succMsg}">
+						<p class="text-success fw-bold">[[${session.succMsg}]]</p>
+						<th:block th:text="${@commonServiceImpl.removeSessionMessage()}"></th:block>
+					</th:block>
+
+					<th:block th:if="${session.errorMsg}">
+						<p class="text-danger fw-bold">[[${session.errorMsg}]]</p>
+						<th:block th:text="${@commonServiceImpl.removeSessionMessage()}"></th:block>
+					</th:block>
+				</div>
+
+				<div class="card-body">
+
+					<!-- Thanh tìm kiếm -->
+					<div class="row mb-3">
+						<div class="col-md-5">
+							<form action="/admin/products" method="get" class="input-group">
+								<input type="text" class="form-control" name="ch"
+									th:value="${paramValue}"
+									placeholder="Search product by name...">
+								<button class="btn btn-primary" type="submit">
+									<i class="fa-solid fa-magnifying-glass me-1"></i> Search
+								</button>
+								<a th:if="${paramValue != null and paramValue != ''}"
+									href="/admin/products" class="btn btn-outline-secondary">Clear</a>
+							</form>
+						</div>
+					</div>
+
+					<!-- Bảng sản phẩm -->
+					<div class="table-responsive">
+						<table class="table table-hover align-middle">
+							<thead class="table-light text-center">
+								<tr>
+									<th scope="col">Sl No</th>
+									<th scope="col">Image</th>
+									<th scope="col">Title</th>
+									<th scope="col">Category</th>
+									<th scope="col">Price</th>
+									<th scope="col">Discount</th>
+									<th scope="col">Discount Price</th>
+									<th scope="col">Status</th>
+									<th scope="col">Stock</th>
+									<th scope="col">Action</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr th:each="p,c:${products}" class="text-center">
+									<!-- SỬA 1: số thứ tự tiếp nối giữa các trang -->
+									<th scope="row" th:text="${pageNo * pageSize + c.count}"></th>
+									<td><img th:src="@{'/img/product_img/'+${p.image}}"
+										width="60px" height="60px"
+										class="rounded object-fit-cover shadow-sm"></td>
+									<td class="fw-semibold text-dark text-start"
+										th:text="${p.title}"></td>
+									<td th:text="${p.category}"></td>
+									<td th:text="${p.price}"></td>
+									<td th:text="${p.discount}"></td>
+									<td th:text="${p.discountPrice}"></td>
+									<td><span th:if="${p.isActive}" class="badge bg-success">Active</span>
+										<span th:unless="${p.isActive}" class="badge bg-secondary">Inactive</span>
+									</td>
+									<td th:text="${p.stock}"></td>
+									<td><a th:href="@{'/admin/editProduct/' + ${p.id}}"
+										class="btn btn-primary btn-sm"> <i
+											class="fa-solid fa-pen-to-square me-1"></i> Edit
+									</a> <a th:href="@{'/admin/deleteProduct/' + ${p.id}}"
+										class="btn btn-danger btn-sm"
+										onclick="return confirm('Delete this product?');"> <i
+											class="fa-solid fa-trash me-1"></i> Delete
+									</a></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+
+					<!-- SỬA 3: thông báo khi không có sản phẩm -->
+					<p class="text-center text-muted fw-semibold my-3"
+						th:if="${productSize == 0}">No product found</p>
+
+					<!-- Thanh phân trang -->
+					<div class="row mt-4" th:if="${totalPages > 0}">
+						<div class="col-md-4">Total Products: [[${totalElements}]]</div>
+						<div class="col-md-8">
+							<nav aria-label="Page navigation">
+								<!-- SỬA 2: dùng tham số của Thymeleaf (tự mã hóa từ khóa), giữ pageSize -->
+								<ul class="pagination justify-content-end">
+									<li class="page-item"
+										th:classappend="${isFirst} ? 'disabled':''"><a
+										class="page-link"
+										th:href="@{/admin/products(pageNo=${pageNo - 1}, pageSize=${pageSize}, ch=${paramValue})}">Previous</a>
+									</li>
+
+									<li class="page-item"
+										th:classappend="${i == pageNo} ? 'active':''"
+										th:each="i:${#numbers.sequence(0, totalPages - 1)}"><a
+										class="page-link"
+										th:href="@{/admin/products(pageNo=${i}, pageSize=${pageSize}, ch=${paramValue})}"
+										th:text="${i + 1}"></a></li>
+
+									<li class="page-item"
+										th:classappend="${isLast} ? 'disabled':''"><a
+										class="page-link"
+										th:href="@{/admin/products(pageNo=${pageNo + 1}, pageSize=${pageSize}, ch=${paramValue})}">Next</a>
+									</li>
+								</ul>
+							</nav>
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</section>
+</body>
+</html>

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	th:replace="~{base::layout(~{::section})}">
+<head>
+<meta charset="ISO-8859-1">
+<title>Products</title>
+</head>
+<body>
+	<section>
+
+		<div class="container-fluid pt-3">
+			<div class="row">
+
+				<!-- Sidebar Category -->
+				<div class="col-md-2">
+
+					<p class="fs-5 fw-semibold mb-2">Category</p>
+
+					<div class="card shadow-sm p-0 mb-5 bg-body rounded">
+						<div class="card-body p-0">
+							<div class="list-group list-group-flush">
+
+								<a href="/products"
+									th:classappend="${selectedCategory == '' || selectedCategory == null} ? 'active' : ''"
+									class="list-group-item list-group-item-action">All</a> <a
+									th:each="c:${categorys}"
+									th:href="@{'/products?category=' + ${c.name}}"
+									th:classappend="${selectedCategory == c.name} ? 'active' : ''"
+									class="list-group-item list-group-item-action">[[${c.name}]]</a>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- Product Display Section -->
+				<div class="col-md-10">
+					<div class="card shadow-sm p-3 mb-5 bg-body rounded">
+						<div class="card-body">
+							<p class="fs-3 text-center">Products</p>
+
+							<div class="row">
+
+								<th:block th:if="${products.size() > 0}">
+									<div class="col-md-3 mb-4" th:each="p:${products}">
+										<div class="card card-sh text-center h-100">
+											<div class="card-body">
+
+												<img th:alt="${p.title}"
+													th:src="@{'/img/product_img/' + ${p.image}}" width="100%"
+													height="150px" style="object-fit: contain;">
+
+												<p class="fs-5 mt-2 mb-1">[[${p.title}]]</p>
+
+												<div class="mb-2">
+													<th:block th:if="${p.isActive and p.stock > 0}">
+														<span class="badge bg-success">Available</span>
+													</th:block>
+													<th:block th:unless="${p.isActive and p.stock > 0}">
+														<span class="badge bg-warning text-white">Out of
+															stock</span>
+													</th:block>
+												</div>
+
+												<p class="fs-6 fw-bold">
+													<span>$[[${p.discountPrice}]]</span> <span
+														class="text-decoration-line-through text-secondary ms-1">$[[${p.price}]]</span>
+													<span class="fs-6 text-success ms-1">[[${p.discount}]]%
+														off</span>
+												</p>
+
+												<a th:href="@{'/product/' + ${p.id}}"
+													class="btn btn-primary col-md-12">View Details</a>
+											</div>
+										</div>
+									</div>
+								</th:block>
+
+								<th:block th:unless="${products.size() > 0}">
+									<p class="fs-4 text-center text-danger">Product not
+										available</p>
+								</th:block>
+							</div>
+
+							<!-- Thanh phân trang (Pagination UI cho Khách hàng) -->
+							<div class="row mt-4" th:if="${totalPages > 0}">
+								<div class="col-md-4">Total Products: [[${totalElements}]]
+								</div>
+								<div class="col-md-8">
+									<nav aria-label="Page navigation example">
+										<ul class="pagination justify-content-end">
+											<!-- Nút Previous -->
+											<li class="page-item"
+												th:classappend="${isFirst} ? 'disabled':''"><a
+												class="page-link"
+												th:href="@{'/products?pageNo=' + ${pageNo - 1} + '&category=' + ${selectedCategory} + '&ch=' + ${paramValue}}">Previous</a>
+											</li>
+
+											<!-- Các số trang -->
+											<li class="page-item"
+												th:classappend="${i == pageNo} ? 'active':''"
+												th:each="i:${#numbers.sequence(0, totalPages - 1)}"><a
+												class="page-link"
+												th:href="@{'/products?pageNo=' + ${i} + '&category=' + ${selectedCategory} + '&ch=' + ${paramValue}}">[[${i
+													+ 1}]]</a></li>
+
+											<!-- Nút Next -->
+											<li class="page-item"
+												th:classappend="${isLast} ? 'disabled':''"><a
+												class="page-link"
+												th:href="@{'/products?pageNo=' + ${pageNo + 1} + '&category=' + ${selectedCategory} + '&ch=' + ${paramValue}}">Next</a>
+											</li>
+										</ul>
+									</nav>
+								</div>
+							</div>
+
+						</div>
+					</div>
+				</div>
+
+			</div>
+		</div>
+	</section>
+</body>
+</html>

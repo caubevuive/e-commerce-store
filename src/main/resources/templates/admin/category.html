@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	th:replace="~{base::layout(~{::section})}">
+<head>
+<meta charset="UTF-8">
+<title>Category</title>
+</head>
+<body>
+	<section>
+		<div class="container-fluid p-4 mt-4">
+			
+			<div class="row mb-3">
+				<div class="col-md-12">
+					<a href="/admin/" class="text-decoration-none fw-semibold">
+						<i class="fa-solid fa-arrow-left me-1"></i> Back to Dashboard
+					</a>
+				</div>
+			</div>
+
+			<div class="row">
+
+				<!-- Form Add Category -->
+				<div class="col-md-3">
+					<div class="card shadow-sm border-0">
+						<div class="card-header bg-white text-center fs-4 fw-bold py-3">Add Category</div>
+						<div class="card-body">
+
+							<th:block th:if="${session.succMsg}">
+								<p class="text-success fw-bold text-center">[[${session.succMsg}]]</p>
+								<th:block th:text="${@commonServiceImpl.removeSessionMessage()}"></th:block>
+							</th:block>
+
+							<th:block th:if="${session.errorMsg}">
+								<p class="text-danger fw-bold text-center">[[${session.errorMsg}]]</p>
+								<th:block th:text="${@commonServiceImpl.removeSessionMessage()}"></th:block>
+							</th:block>
+
+							<form action="/admin/saveCategory" method="post"
+								enctype="multipart/form-data">
+								<div class="mb-3">
+									<label class="form-label">Enter Category</label> <input
+										type="text" name="name" class="form-control" required>
+								</div>
+
+								<div class="mb-3">
+									<label class="form-label">Status</label>
+									<div class="form-check">
+										<input class="form-check-input" type="radio" checked
+											value="true" name="isActive" id="flexRadioDefault1">
+										<label class="form-check-label" for="flexRadioDefault1">Active</label>
+									</div>
+
+									<div class="form-check">
+										<input class="form-check-input" type="radio" value="false"
+											name="isActive" id="flexRadioDefault2"> <label
+											class="form-check-label" for="flexRadioDefault2">Inactive</label>
+									</div>
+								</div>
+
+								<div class="mb-3">
+									<label class="form-label">Upload Image</label> <input
+										type="file" name="file" class="form-control">
+								</div>
+
+								<button class="btn btn-primary col-md-12 mt-2">
+									<i class="fa-solid fa-plus me-1"></i> Save
+								</button>
+							</form>
+						</div>
+					</div>
+				</div>
+
+				<!-- Category Details Table -->
+				<div class="col-md-9">
+					<div class="card shadow-sm border-0">
+						<div class="card-header bg-white text-center fs-4 fw-bold py-3">Category Details</div>
+						<div class="card-body">
+							<table class="table table-hover align-middle">
+								<thead class="table-light text-center">
+									<tr>
+										<th scope="col">Sl No</th>
+										<th scope="col">Category</th>
+										<th scope="col">Status</th>
+										<th scope="col">Image</th>
+										<th scope="col">Action</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr th:each="cat, ch : ${categorys}" class="text-center">
+										<!-- Số thứ tự chuẩn theo từng trang (Trang 1: 1-10, Trang 2: 11-20...) -->
+										<th scope="row" th:text="${pageNo * 10 + ch.count}"></th>
+										<td class="fw-semibold text-dark" th:text="${cat.name}"></td>
+										<td th:text="${cat.isActive}"></td>
+										<td>
+											<img th:src="@{'/img/category_img/' + ${cat.imageName}}"
+												width="50px" height="50px" class="rounded object-fit-cover shadow-sm">
+										</td>
+										<td>
+											<a th:href="@{'/admin/editCategory/' + ${cat.id}}"
+												class="btn btn-sm btn-primary">
+												<i class="fa-solid fa-pen-to-square me-1"></i> Edit
+											</a> 
+											<a th:href="@{'/admin/deleteCategory/' + ${cat.id}}"
+												class="btn btn-sm btn-danger">
+												<i class="fa-solid fa-trash me-1"></i> Delete
+											</a>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+
+							<!-- ================= PHÂN TRANG (PAGINATION) ================= -->
+							<div class="row mt-4 align-items-center" th:if="${totalPages > 1}">
+								<div class="col-md-6">
+									<p class="text-muted mb-0">
+										Showing page <span class="fw-semibold" th:text="${pageNo + 1}">1</span> of <span class="fw-semibold" th:text="${totalPages}">1</span>
+									</p>
+								</div>
+								<div class="col-md-6">
+									<nav aria-label="Page navigation">
+										<ul class="pagination justify-content-end mb-0">
+											<!-- Nút Previous -->
+											<li class="page-item" th:classappend="${pageNo == 0} ? 'disabled'">
+												<a class="page-link" th:href="@{'/admin/category?page=' + ${pageNo - 1}}">Previous</a>
+											</li>
+											
+											<!-- Danh sách số trang -->
+											<li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+												th:classappend="${pageNo == i} ? 'active'">
+												<a class="page-link" th:href="@{'/admin/category?page=' + ${i}}" th:text="${i + 1}">1</a>
+											</li>
+											
+											<!-- Nút Next -->
+											<li class="page-item" th:classappend="${pageNo + 1 == totalPages} ? 'disabled'">
+												<a class="page-link" th:href="@{'/admin/category?page=' + ${pageNo + 1}}">Next</a>
+											</li>
+										</ul>
+									</nav>
+								</div>
+							</div>
+							<!-- ================= END PHÂN TRANG ================= -->
+
+						</div>
+					</div>
+				</div>
+
+			</div>
+		</div>
+	</section>
+</body>
+</html>
