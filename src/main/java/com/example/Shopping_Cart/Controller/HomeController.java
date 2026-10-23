@@ -284,12 +284,10 @@ public class HomeController {
 			String resetLink = request.getRequestURL().toString().replace(request.getRequestURI(), "")
 					+ "/reset-password?token=" + token;
 
-			Boolean sendMail = commonService.sendMail(resetLink, email);
-			if (sendMail) {
-				session.setAttribute("succMsg", "Password reset link has been sent to your email!");
-			} else {
-				session.setAttribute("errorMsg", "Failed to send email. Please check server settings!");
-			}
+			commonService.sendMail(resetLink, email);
+
+			session.setAttribute("succMsg", "Password reset link has been sent to your email!");
+
 		} else {
 			session.setAttribute("errorMsg", "Email address not found!");
 		}

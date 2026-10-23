@@ -4,5 +4,5 @@ public interface CommonService {
 
 	public void removeSessionMessage();
 
-	public Boolean sendMail(String url, String recipientEmail);
+	public void sendMail(String url, String recipientEmail);
 }

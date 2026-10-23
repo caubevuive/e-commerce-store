@@ -29,7 +29,7 @@ public class CommonServiceImpl implements CommonService {
 
 	@Override
 	@Async
-	public Boolean sendMail(String url, String recipientEmail) {
+	public void sendMail(String url, String recipientEmail) { // 👈 Đổi Boolean thành void
 		try {
 			MimeMessage message = mailSender.createMimeMessage();
 			MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
@@ -44,11 +44,10 @@ public class CommonServiceImpl implements CommonService {
 
 			helper.setText(content, true);
 			mailSender.send(message);
-			return true;
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			return false;
+
 		}
 	}
 }

@@ -150,6 +150,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	@Transactional
 	public void updateUserResetToken(String email, String token) {
 		UserDtls user = userRepository.findByEmail(email);
 		if (user != null) {

@@ -43,13 +43,12 @@ public class SecurityConfig {
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-		http.csrf(csrf -> csrf.disable())
-				.authorizeHttpRequests(auth -> auth
-						.requestMatchers("/", "/signin", "/login", "/register", "/saveUser", "/verify-otp",
-								"/resend-otp", "/forgot-password", "/send-forgot-password", "/reset-password",
-								"/change-password", "/products/**", "/product/**", "/css/**", "/js/**", "/img/**")
-						.permitAll().requestMatchers("/user/**").hasRole("USER").requestMatchers("/admin/**")
-						.hasRole("ADMIN").anyRequest().authenticated())
+		http.csrf(csrf -> csrf.disable()).authorizeHttpRequests(auth -> auth
+				.requestMatchers("/", "/signin", "/login", "/register", "/saveUser", "/verify-otp", "/resend-otp",
+						"/forgot-password", "/send-forgot-password", "/reset-password", "/change-password", "/error",
+						"/products/**", "/product/**", "/css/**", "/js/**", "/img/**")
+				.permitAll().requestMatchers("/user/**").hasRole("USER").requestMatchers("/admin/**").hasRole("ADMIN")
+				.anyRequest().authenticated())
 				.formLogin(form -> form.loginPage("/signin").loginProcessingUrl("/login")
 						.successHandler(authenticationSuccessHandler).failureHandler(authenticationFailureHandler)
 						.permitAll())

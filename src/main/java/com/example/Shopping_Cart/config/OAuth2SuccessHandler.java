@@ -45,9 +45,8 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 			user.setRole("ROLE_USER");
 			user.setIsEnable(true);
 
-			// Set default values matching entity validation rules
 			user.setPassword("OAUTH2_USER_DEFAULT_PASSWORD");
-			user.setMobileNumber("0000000000"); // Phải đủ 10 chữ số để khớp với @Size hoặc @Pattern trong UserDtls
+			user.setMobileNumber("0000000000");
 			user.setAddress("N/A");
 			user.setCity("N/A");
 			user.setState("N/A");
